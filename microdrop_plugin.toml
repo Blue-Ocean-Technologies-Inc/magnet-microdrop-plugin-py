@@ -1,0 +1,21 @@
+schema_version = 1
+name = "magnet_peripherals"
+label = "Magnet Peripherals (Z-Stage)"
+version = "1.0.0"
+packages = ["peripheral_controller", "peripherals_ui", "peripheral_protocol_controls"]
+
+[[groups]]
+name = "zstage_ui"
+label = "Z-Stage UI (controls/status dock-pane + protocol column + statusbar icon)"
+plugins = [
+    "peripherals_ui.plugin:PeripheralUiPlugin",
+    "peripheral_protocol_controls.plugin:PeripheralProtocolControlsPlugin",
+]
+enabled_key = "plugin_group_enabled.zstage_ui"
+
+[[groups]]
+name = "zstage_backend"
+label = "Z-Stage backend (board driver)"
+plugins = ["peripheral_controller.plugin:PeripheralControllerPlugin"]
+enabled_key = "plugin_group_enabled.zstage_backend"
+post_enable_publish_topic = "ZStage/requests/start_device_monitoring"

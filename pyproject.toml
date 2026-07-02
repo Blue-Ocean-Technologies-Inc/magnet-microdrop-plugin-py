@@ -1,0 +1,41 @@
+[project]
+name = "magnet-microdrop-plugin"
+version = "1.0.0"
+description = "MicroDrop magnet/Z-Stage peripheral plugin: board driver, status/controls UI, and protocol column"
+requires-python = ">=3.11"
+dependencies = [
+    "apptools>=5.2",
+    "pydantic>=2",
+]
+
+# Discovered by MicroDrop's plugin manager: the entry point anchors the
+# distribution; the microdrop_plugin.toml manifest (shipped as package data of
+# the anchor via force-include) declares the toggleable plugin groups.
+[project.entry-points."microdrop.plugins"]
+magnet_peripherals = "peripheral_controller"
+
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["peripheral_controller", "peripherals_ui", "peripheral_protocol_controls"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"microdrop_plugin.toml" = "peripheral_controller/microdrop_plugin.toml"
+
+[tool.pixi.package]
+name = "magnet-microdrop-plugin"
+version = "1.0.0"
+
+[tool.pixi.package.build.backend]
+name = "pixi-build-python"
+version = "0.*"
+channels = ["https://prefix.dev/conda-forge"]
+
+[tool.pixi.package.host-dependencies]
+hatchling = "*"
+
+[tool.pixi.package.run-dependencies]
+apptools = ">=5.2"
+pydantic = ">=2"
