@@ -1,7 +1,7 @@
 schema_version = 1
 name = "magnet_peripherals"
 label = "Magnet Peripherals (Z-Stage)"
-version = "1.0.0"
+version = "1.0.1"
 packages = ["peripheral_controller", "peripherals_ui", "peripheral_protocol_controls"]
 
 [[groups]]
