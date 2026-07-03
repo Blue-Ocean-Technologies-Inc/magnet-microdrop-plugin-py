@@ -18,4 +18,3 @@ name = "zstage_backend"
 label = "Z-Stage backend (board driver)"
 plugins = ["peripheral_controller.plugin:PeripheralControllerPlugin"]
 enabled_key = "plugin_group_enabled.zstage_backend"
-post_enable_publish_topic = "ZStage/requests/start_device_monitoring"
