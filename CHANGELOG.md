@@ -1,3 +1,9 @@
+## v1.0.3 (2026-07-06)
+
+### Fix
+
+- probe board connection on extra_plugins_loaded
+
 ## v1.0.2 (2026-07-06)
 
 ### Refactor

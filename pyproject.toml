@@ -1,6 +1,6 @@
 [project]
 name = "magnet-microdrop-plugin"
-version = "1.0.2"
+version = "1.0.3"
 description = "MicroDrop magnet/Z-Stage peripheral plugin: board driver, status/controls UI, and protocol column"
 requires-python = ">=3.11"
 dependencies = []
@@ -27,7 +27,7 @@ preview = ["pixi-build"]
 
 [tool.pixi.package]
 name = "magnet-microdrop-plugin"
-version = "1.0.2"
+version = "1.0.3"
 
 [tool.pixi.package.build.backend]
 name = "pixi-build-python"
