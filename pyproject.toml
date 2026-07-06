@@ -36,3 +36,14 @@ channels = ["https://prefix.dev/conda-forge"]
 
 [tool.pixi.package.host-dependencies]
 hatchling = "*"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_provider = "pep621"
+tag_format = "v$version"
+bump_message = "chore: release v$new_version [skip ci]"
+update_changelog_on_bump = true
+version_files = [
+    "pyproject.toml:^version",
+    "microdrop_plugin.toml:^version",
+]
