@@ -62,7 +62,7 @@ class PeripheralUiPlugin(BaseStatusPlugin):
     # ------------------------------------------------------------------ #
     # Startup connection probe                                             #
     # ------------------------------------------------------------------ #
-    @observe("application.application_initialized")
+    @observe("application:extra_plugins_loaded")
     def _on_app_initialized(self, event):
         # check if peripheral board connected
         if check_connected_ports_hwid(MR_BOX_HWID):
