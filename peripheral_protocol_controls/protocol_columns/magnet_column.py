@@ -1,6 +1,11 @@
 """Magnet compound column — engages/retracts the peripheral z-stage
-for an experiment step. Two coupled cells (magnet_on Bool + magnet_height_mm
-Float) sharing one model + one handler via the PPT-11 compound framework.
+for an experiment step. Three coupled cells (set_magnet Bool +
+magnet_on Bool + magnet_height_mm Float) sharing one model + one handler
+via the PPT-11 compound framework.
+
+set_magnet unchecked = the step leaves the z-stage untouched (no
+engage/retract publish, no applied-ack wait) — previously every step
+commanded the stage, with magnet_on False meaning an ACTIVE retract.
 
 Sentinel value MIN_ZSTAGE_HEIGHT_MM - 0.5 (= 0.0) represents 'Default'
 mode — the spinbox renders it as 'Default' (Qt's setSpecialValueText)
@@ -29,6 +34,8 @@ from pluggable_protocol_tree.views.columns.spinbox import (
     DoubleSpinBoxColumnView,
 )
 
+from ..consts import SET_MAGNET_FIELD_ID
+
 
 # Sentinel value below the minimum hardware position; the spinbox
 # renders it as "Default" and the backend treats any value < MIN as
@@ -37,23 +44,38 @@ _DEFAULT_SENTINEL = float(MIN_ZSTAGE_HEIGHT_MM - 0.5)
 
 
 class MagnetCompoundModel(BaseCompoundColumnModel):
-    """Two coupled fields. base_id 'magnet' appears as compound_id on
+    """Three coupled fields. base_id 'magnet' appears as compound_id on
     each field's column entry in JSON (PPT-11 framework)."""
     base_id = "magnet"
 
     def field_specs(self):
         return [
+            FieldSpec(SET_MAGNET_FIELD_ID, "Set Magnet", False),
             FieldSpec("magnet_on", "Magnet", False),
             FieldSpec("magnet_height_mm", "Magnet Height (mm)",
                       _DEFAULT_SENTINEL),
         ]
 
     def trait_for_field(self, field_id):
+        if field_id == SET_MAGNET_FIELD_ID:
+            return Bool(False)
         if field_id == "magnet_on":
             return Bool(False)
         if field_id == "magnet_height_mm":
             return Float(_DEFAULT_SENTINEL)
         raise KeyError(field_id)
+
+
+class MagnetOnCheckboxView(CheckboxColumnView):
+    """Engage/retract checkbox, checkable only while the step's Set Magnet
+    checkbox is on (cross-cell editability via the canonical PPT-11
+    get_flags(row) pattern)."""
+
+    def get_flags(self, row):
+        flags = super().get_flags(row)
+        if not getattr(row, SET_MAGNET_FIELD_ID, False):
+            flags &= ~Qt.ItemIsUserCheckable
+        return flags
 
 
 class MagnetHeightSpinBoxView(DoubleSpinBoxColumnView):
@@ -77,7 +99,8 @@ class MagnetHeightSpinBoxView(DoubleSpinBoxColumnView):
 
     def get_flags(self, row):
         flags = super().get_flags(row)
-        if not getattr(row, "magnet_on", False):
+        if not (getattr(row, SET_MAGNET_FIELD_ID, False)
+                and getattr(row, "magnet_on", False)):
             flags &= ~Qt.ItemIsEditable
         return flags
 
@@ -108,6 +131,10 @@ class MagnetHandler(BaseCompoundColumnHandler):
         # back. Mirrors the legacy protocol_grid Preview Mode.
         if getattr(ctx.protocol, "preview_mode", False):
             return
+        # Unchecked = the step leaves the z-stage untouched: no
+        # engage/retract publish, no applied-ack wait (issue #1).
+        if not getattr(row, SET_MAGNET_FIELD_ID, False):
+            return
         payload = json.dumps({
             "on": bool(row.magnet_on),
             "height_mm": float(row.magnet_height_mm),
@@ -124,7 +151,8 @@ def make_magnet_column():
     return CompoundColumn(
         model=MagnetCompoundModel(),
         view=DictCompoundColumnView(cell_views={
-            "magnet_on": CheckboxColumnView(),
+            SET_MAGNET_FIELD_ID: CheckboxColumnView(),
+            "magnet_on": MagnetOnCheckboxView(),
             "magnet_height_mm": MagnetHeightSpinBoxView(
                 low=_DEFAULT_SENTINEL,
                 high=float(MAX_ZSTAGE_HEIGHT_MM),

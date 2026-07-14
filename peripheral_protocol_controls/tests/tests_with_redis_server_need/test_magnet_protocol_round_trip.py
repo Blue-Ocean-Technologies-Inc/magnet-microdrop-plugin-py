@@ -147,7 +147,7 @@ def test_magnet_responder_received_correct_setpoint(setup_responder_and_spy):
         "name": "S1",
         "duration_s": 0.05,
         "electrodes": ["e00"],
-        "magnet_on": True,
+        "set_magnet": True, "magnet_on": True,
         "magnet_height_mm": 5.0,
     })
 
@@ -174,7 +174,7 @@ def test_magnet_ack_before_electrode_change(setup_responder_and_spy):
         "name": "S1",
         "duration_s": 0.05,
         "electrodes": ["e00", "e01"],
-        "magnet_on": True,
+        "set_magnet": True, "magnet_on": True,
         "magnet_height_mm": 5.0,
     })
 
