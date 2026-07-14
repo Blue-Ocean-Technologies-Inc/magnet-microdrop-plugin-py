@@ -1,3 +1,9 @@
+## v1.0.4 (2026-07-14)
+
+### Refactor
+
+- **preferences**: drop heater prefs from the shared pane
+
 ## v1.0.3 (2026-07-06)
 
 ### Fix
