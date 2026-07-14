@@ -1,3 +1,9 @@
+## v1.1.0 (2026-07-14)
+
+### Feat
+
+- **protocol-columns**: Set Magnet checkbox to leave the stage untouched
+
 ## v1.0.4 (2026-07-14)
 
 ### Refactor
