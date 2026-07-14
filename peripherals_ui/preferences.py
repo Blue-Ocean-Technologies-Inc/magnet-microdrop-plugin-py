@@ -46,22 +46,9 @@ class PeripheralPreferencesPane(PreferencesPane):
         group_style_sheet=preferences_group_style_sheet,
     )
 
-    # Heater settings group (shares this Peripheral Settings tab).
-    heater_group = create_item_label_group(
-        "heater_show_stream_off_warning",
-        label_text="Warn when setting a heater setpoint while streaming is off",
-        orientation="horizontal",
-        label_position="last",
-        group_label="Heater",
-        group_show_border=True,
-        group_style_sheet=preferences_group_style_sheet,
-    )
-
     view = View(
         Item("_"),  # Separator
         settings_grid,
-        Item("_"),  # Separator
-        heater_group,
         Item("_"),  # Separator to space this out from further contributions to the pane.
         resizable=True
     )
