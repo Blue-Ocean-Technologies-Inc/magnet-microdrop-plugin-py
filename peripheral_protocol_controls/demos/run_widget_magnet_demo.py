@@ -63,17 +63,17 @@ def _pre_populate(rm):
     rm.add_step(values={
         "name": "Step 1: engage at Default (sentinel; uses live pref)",
         "duration_s": 0.2,
-        "magnet_on": True, "magnet_height_mm": 0.0,
+        "set_magnet": True, "magnet_on": True, "magnet_height_mm": 0.0,
     })
     rm.add_step(values={
         "name": "Step 2: engage at 12.0 mm explicit",
         "duration_s": 0.2,
-        "magnet_on": True, "magnet_height_mm": 12.0,
+        "set_magnet": True, "magnet_on": True, "magnet_height_mm": 12.0,
     })
     rm.add_step(values={
         "name": "Step 3: retract",
         "duration_s": 0.2,
-        "magnet_on": False, "magnet_height_mm": 0.0,
+        "set_magnet": True, "magnet_on": False, "magnet_height_mm": 0.0,
     })
 
 

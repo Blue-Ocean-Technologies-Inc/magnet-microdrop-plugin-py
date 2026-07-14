@@ -8,8 +8,10 @@ from traits.api import Bool, Float, HasTraits
 from peripheral_controller.consts import (
     MIN_ZSTAGE_HEIGHT_MM, MAX_ZSTAGE_HEIGHT_MM,
 )
+from peripheral_protocol_controls.consts import SET_MAGNET_FIELD_ID
 from peripheral_protocol_controls.protocol_columns.magnet_column import (
-    MagnetCompoundModel, MagnetHeightSpinBoxView, make_magnet_column,
+    MagnetCompoundModel, MagnetHeightSpinBoxView, MagnetOnCheckboxView,
+    make_magnet_column,
 )
 from pluggable_protocol_tree.models.compound_column import (
     CompoundColumn,
@@ -19,11 +21,14 @@ from pluggable_protocol_tree.models.compound_column import (
 def test_magnet_compound_model_field_specs():
     m = MagnetCompoundModel()
     specs = m.field_specs()
-    assert [s.field_id for s in specs] == ["magnet_on", "magnet_height_mm"]
-    assert [s.col_name for s in specs] == ["Magnet", "Magnet Height (mm)"]
+    assert [s.field_id for s in specs] == [
+        SET_MAGNET_FIELD_ID, "magnet_on", "magnet_height_mm"]
+    assert [s.col_name for s in specs] == [
+        "Set Magnet", "Magnet", "Magnet Height (mm)"]
     assert specs[0].default_value is False
+    assert specs[1].default_value is False
     # Sentinel = MIN - 0.5 (the "Default" mode)
-    assert specs[1].default_value == float(MIN_ZSTAGE_HEIGHT_MM - 0.5)
+    assert specs[2].default_value == float(MIN_ZSTAGE_HEIGHT_MM - 0.5)
 
 
 def test_magnet_compound_model_traits_are_bool_and_float():
@@ -67,6 +72,7 @@ def test_magnet_height_view_read_only_when_magnet_off():
         high=float(MAX_ZSTAGE_HEIGHT_MM),
     )
     class Row(HasTraits):
+        set_magnet = Bool(True)
         magnet_on = Bool(False)
         magnet_height_mm = Float(5.0)
     r = Row()
@@ -80,6 +86,7 @@ def test_magnet_height_view_editable_when_magnet_on():
         high=float(MAX_ZSTAGE_HEIGHT_MM),
     )
     class Row(HasTraits):
+        set_magnet = Bool(True)
         magnet_on = Bool(True)
         magnet_height_mm = Float(5.0)
     r = Row()
@@ -87,11 +94,31 @@ def test_magnet_height_view_editable_when_magnet_on():
     assert flags & Qt.ItemIsEditable
 
 
-def test_make_magnet_column_returns_compound_with_two_fields():
+def test_cells_locked_until_set_magnet_checked():
+    """set_magnet off = the engage checkbox is not checkable and the
+    height cell is read-only even with magnet_on True (#1)."""
+    height_view = MagnetHeightSpinBoxView(
+        low=float(MIN_ZSTAGE_HEIGHT_MM - 0.5),
+        high=float(MAX_ZSTAGE_HEIGHT_MM),
+    )
+    on_view = MagnetOnCheckboxView()
+
+    class Row(HasTraits):
+        set_magnet = Bool(False)
+        magnet_on = Bool(True)
+        magnet_height_mm = Float(5.0)
+    r = Row()
+    assert not (height_view.get_flags(r) & Qt.ItemIsEditable)
+    assert not (on_view.get_flags(r) & Qt.ItemIsUserCheckable)
+    r.set_magnet = True
+    assert on_view.get_flags(r) & Qt.ItemIsUserCheckable
+
+
+def test_make_magnet_column_returns_compound_with_three_fields():
     cc = make_magnet_column()
     assert isinstance(cc, CompoundColumn)
     ids = [s.field_id for s in cc.model.field_specs()]
-    assert ids == ["magnet_on", "magnet_height_mm"]
+    assert ids == [SET_MAGNET_FIELD_ID, "magnet_on", "magnet_height_mm"]
 
 
 import json
@@ -125,6 +152,7 @@ def test_magnet_handler_on_step_publishes_engage_payload():
     pushes a grid value."""
     handler = make_magnet_column().handler
     row = MagicMock()
+    row.set_magnet = True
     row.magnet_on = True
     row.magnet_height_mm = 5.0
     ctx = MagicMock()
@@ -151,6 +179,7 @@ def test_magnet_handler_skips_ack_wait_when_ack_time_zero():
     handler = make_magnet_column().handler
     handler.ack_time_s = 0.0
     row = MagicMock()
+    row.set_magnet = True
     row.magnet_on = True
     row.magnet_height_mm = 5.0
     ctx = MagicMock()
@@ -175,6 +204,7 @@ def test_magnet_handler_on_step_publishes_retract_payload():
     )
     handler = MagnetHandler()
     row = MagicMock()
+    row.set_magnet = True
     row.magnet_on = False
     row.magnet_height_mm = 0.0
     ctx = MagicMock()
@@ -200,6 +230,7 @@ def test_magnet_handler_on_step_publishes_default_sentinel_payload():
     )
     handler = MagnetHandler()
     row = MagicMock()
+    row.set_magnet = True
     row.magnet_on = True
     row.magnet_height_mm = float(MIN_ZSTAGE_HEIGHT_MM - 0.5)
     ctx = MagicMock()
@@ -215,3 +246,24 @@ def test_magnet_handler_on_step_publishes_default_sentinel_payload():
     payload = json.loads(published[0]["message"])
     assert payload["on"] is True
     assert payload["height_mm"] == float(MIN_ZSTAGE_HEIGHT_MM - 0.5)
+
+
+def test_magnet_handler_unchecked_step_leaves_stage_untouched():
+    """set_magnet off = no engage/retract publish and no ack wait (#1)."""
+    handler = make_magnet_column().handler
+    row = MagicMock()
+    row.set_magnet = False
+    row.magnet_on = True
+    row.magnet_height_mm = 5.0
+    ctx = MagicMock()
+    ctx.protocol.preview_mode = False
+
+    published = []
+    with patch(
+        "peripheral_protocol_controls.protocol_columns.magnet_column.publish_message",
+        side_effect=lambda **kw: published.append(kw),
+    ):
+        handler.on_step(row, ctx)
+
+    assert published == []
+    ctx.wait_for.assert_not_called()
