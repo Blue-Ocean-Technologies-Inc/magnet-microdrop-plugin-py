@@ -70,17 +70,17 @@ def publish_position_update(func):
 
     @wraps(func)
     def wrapped(self, *args, **kwargs):
-        ols_pos = self.proxy.zstage.position
+        old_pos = self.proxy.zstage.position
 
         try:
             result = func(self, *args, **kwargs)
 
         finally:
             new_pos = self.proxy.zstage.position
-            if new_pos != ols_pos:
+            if new_pos != old_pos:
                 publish_message(f"{new_pos}", ZSTAGE_POSITION_UPDATED)
 
-            logger.info(f"Method {func.__name__} finished. Positions -> new: {self.proxy.zstage.position}, old: {ols_pos}")
+            logger.info(f"Method {func.__name__} finished. Positions -> new: {self.proxy.zstage.position}, old: {old_pos}")
 
         return result
 
