@@ -1,5 +1,9 @@
-from traits.api import Instance, Str, provides
+from traits.api import Instance, List, Str, provides
 
+from peripheral_device_controller_base.consts import (
+    DEFAULT_ALWAYS_ALLOWED_SUBTOPICS,
+    FIRMWARE_UPLOAD_ALWAYS_ALLOWED_SUBTOPICS,
+)
 from peripheral_device_controller_base.peripheral_device_controller_base import PeripheralDeviceControllerBase
 
 from .interfaces.i_peripheral_controller_base import IPeripheralControllerBase
@@ -24,3 +28,10 @@ class PeripheralControllerBase(PeripheralDeviceControllerBase):
     listener_name = Str(f"{PKG}_listener")
     proxy = Instance(DramatiqPeripheralSerialProxy)
     preferences = Instance(PeripheralPreferences)
+    # Firmware upload/cancel must run while disconnected: flashing IS the
+    # recovery path for a board whose firmware can't connect, and the upload
+    # service itself releases the proxy (disconnecting) before flashing.
+    _always_allowed_subtopics = List(
+        Str,
+        DEFAULT_ALWAYS_ALLOWED_SUBTOPICS + FIRMWARE_UPLOAD_ALWAYS_ALLOWED_SUBTOPICS,
+    )

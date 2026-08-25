@@ -28,8 +28,18 @@ class PeripheralControllerPlugin(PeripheralDeviceControllerPlugin):
     def _service_offers_default(self):
         """Return the service offers."""
         return [
-            ServiceOffer(protocol=IPeripheralControlMixinService, factory=self._create_monitor_service),
-            ServiceOffer(protocol=IPeripheralControlMixinService, factory=self._create_zstage_state_setter_service),
+            ServiceOffer(
+                protocol=IPeripheralControlMixinService,
+                factory=self._create_monitor_service,
+            ),
+            ServiceOffer(
+                protocol=IPeripheralControlMixinService,
+                factory=self._create_zstage_state_setter_service,
+            ),
+            ServiceOffer(
+                protocol=IPeripheralControlMixinService,
+                factory=self._create_firmware_upload_service,
+            ),
         ]
 
     def _create_monitor_service(self, *args, **kwargs):
@@ -41,3 +51,9 @@ class PeripheralControllerPlugin(PeripheralDeviceControllerPlugin):
         """Returns a zstage mixin service to set z-stage states"""
         from .services.zstage_state_setter_service import ZStageStatesSetterMixinService
         return ZStageStatesSetterMixinService
+
+    def _create_firmware_upload_service(self, *args, **kwargs):
+        """Returns the z-stage firmware-upload mixin service."""
+        from .services.zstage_firmware_upload_service import ZStageFirmwareUploadService
+
+        return ZStageFirmwareUploadService

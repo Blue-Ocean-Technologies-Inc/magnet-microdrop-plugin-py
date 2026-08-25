@@ -1,3 +1,11 @@
+from peripheral_device_controller_base.consts import (
+    upload_firmware_topic,
+    cancel_firmware_upload_topic,
+    firmware_upload_started_topic,
+    firmware_upload_log_topic,
+    firmware_upload_finished_topic,
+)
+
 # This module's package.
 PKG = '.'.join(__name__.split('.')[:-1])
 PKG_name = PKG.title().replace("_", " ")
@@ -22,6 +30,21 @@ MOVE_DOWN = f"{DEVICE_NAME}/requests/move_down"
 SET_POSITION = f"{DEVICE_NAME}/requests/set_position"
 RETRY_CONNECTION = f"{DEVICE_NAME}/requests/retry_connection"
 UPDATE_CONFIG = f"{DEVICE_NAME}/requests/update_config"
+
+# Firmware upload: the shared PeripheralFirmwareUploadService owns the run;
+# the ZStage service overrides only the flash step to call the bundled
+# `python -m mr_box_peripheral_board.bin.upload -p <port>` uploader.
+UPLOAD_FIRMWARE = upload_firmware_topic(DEVICE_NAME)
+CANCEL_FIRMWARE_UPLOAD = cancel_firmware_upload_topic(DEVICE_NAME)
+FIRMWARE_UPLOAD_STARTED = firmware_upload_started_topic(DEVICE_NAME)
+FIRMWARE_UPLOAD_LOG = firmware_upload_log_topic(DEVICE_NAME)
+FIRMWARE_UPLOAD_FINISHED = firmware_upload_finished_topic(DEVICE_NAME)
+
+# What the mr-box board is flashed with: the firmware bundled inside the
+# installed mr_box_peripheral_board package (there is no user-pickable
+# source). Sent as the upload request's firmware_source so the started log
+# line names it.
+BUNDLED_MR_BOX_FIRMWARE_DESCRIPTION = "the bundled mr-box-peripheral-board firmware"
 
 # Protocol-driven magnet engage/retract (separate from existing
 # MOVE_UP/MOVE_DOWN/SET_POSITION/GO_HOME so the protocol-side gets
