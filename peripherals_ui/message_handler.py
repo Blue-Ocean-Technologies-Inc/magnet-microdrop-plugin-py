@@ -13,6 +13,13 @@ from template_status_and_controls.base_message_handler import BaseMessageHandler
 from microdrop_utils.decorators import timestamped_value
 from logger.logger_service import get_logger
 
+from peripheral_controller.consts import (
+    FIRMWARE_UPLOAD_FINISHED,
+    FIRMWARE_UPLOAD_LOG,
+    FIRMWARE_UPLOAD_STARTED,
+)
+
+from .live_state import peripheral_live_state
 from .model import PeripheralModel
 
 logger = get_logger(__name__)
@@ -29,14 +36,25 @@ class PeripheralMessageHandler(BaseMessageHandler):
     # are overridden to write that trait. Dedup guards stay.
     @timestamped_value("connected_message")
     def _on_connected_triggered(self, body):
+        """Also ferry the board's serial port to live_state so the
+        firmware-upload dialog keeps its port combo in sync with the
+        auto-detected port. The monitor republishes a "<device>_connected"
+        sentinel (not a port) when asked to start monitoring an
+        already-connected board — ignore that."""
         logger.info(f"{self.model.device_name} connected: {body}")
         self.model.status = True
+        port = str(body)
+        if port and not port.endswith("_connected"):
+            peripheral_live_state.board_port = port
 
     @timestamped_value("connected_message")
     def _on_disconnected_triggered(self, body):
+        """Also clear the ferried port so the firmware-upload dialog shows no
+        auto-detected port while disconnected."""
         logger.info(f"{self.model.device_name} disconnected: {body}")
         self.model.status = False
         self.model.realtime_mode = False
+        peripheral_live_state.board_port = ""
 
     @timestamped_value("realtime_mode_message")
     def _on_set_realtime_mode_triggered(self, body):
@@ -58,3 +76,16 @@ class PeripheralMessageHandler(BaseMessageHandler):
             self.model.searching = bool(json.loads(body))
         except Exception:
             logger.error("Failed to parse searching signal", exc_info=True)
+
+    def _on_firmware_upload_started_triggered(self, body):
+        """Backend accepted an upload — ferry to the GUI thread via live_state
+        (the dialog's dispatch="ui" observer applies it)."""
+        peripheral_live_state.firmware_upload_message = (FIRMWARE_UPLOAD_STARTED, body)
+
+    def _on_firmware_upload_log_triggered(self, body):
+        """One uploader progress line — ferry to the GUI thread."""
+        peripheral_live_state.firmware_upload_message = (FIRMWARE_UPLOAD_LOG, body)
+
+    def _on_firmware_upload_finished_triggered(self, body):
+        """Upload outcome — ferry to the GUI thread."""
+        peripheral_live_state.firmware_upload_message = (FIRMWARE_UPLOAD_FINISHED, body)
