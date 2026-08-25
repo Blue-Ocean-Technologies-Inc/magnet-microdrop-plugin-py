@@ -1,3 +1,14 @@
+## v1.2.0 (2026-08-25)
+
+### Feat
+
+- **ui**: add Upload Firmware dialog and menu action
+- **controller**: add firmware upload for the mr-box board
+
+### Refactor
+
+- **zstage**: fix ols_pos typo in the position-update decorator
+
 ## v1.1.1 (2026-07-15)
 
 ## v1.1.0 (2026-07-14)
