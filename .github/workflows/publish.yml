@@ -13,9 +13,8 @@ name: Publish to prefix.dev
 # the repo always reflects the channel. For a forced or explicit release,
 # run the workflow manually with a version input.
 #
-# Auth: set the PREFIX_API_KEY repository secret (prefix.dev API key).
-# Alternative (no stored secret): configure trusted publishing for this repo
-# on the prefix.dev channel settings — id-token: write is already granted.
+# Auth: trusted publishing — this repo + workflow are registered as a
+# trusted publisher on the prefix.dev channel, so no stored secret is needed.
 
 on:
   push:
@@ -41,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write   # push the release commit + tag
-      id-token: write   # for prefix.dev trusted publishing, if enabled later
+      id-token: write   # prefix.dev trusted publishing
     steps:
       - uses: actions/checkout@v4
         with:
