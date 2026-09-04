@@ -6,10 +6,7 @@ packages = ["peripheral_controller", "peripherals_ui", "peripheral_protocol_cont
 [[groups]]
 name = "zstage_ui"
 label = "Z-Stage UI (controls/status dock-pane + protocol column + statusbar icon)"
-plugins = [
-    "peripherals_ui.plugin:PeripheralUiPlugin",
-    "peripheral_protocol_controls.plugin:PeripheralProtocolControlsPlugin",
-]
+plugins = ["peripherals_ui.plugin:PeripheralUiPlugin", "peripheral_protocol_controls.plugin:PeripheralProtocolControlsPlugin"]
 enabled_key = "plugin_group_enabled.zstage_ui"
 
 [[groups]]

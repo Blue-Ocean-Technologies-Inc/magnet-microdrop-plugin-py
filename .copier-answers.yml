@@ -1,0 +1,30 @@
+_commit: v0.1.1
+_src_path: C:/Users/Info/PycharmProjects/microdrop-plugin-template
+anchor_package: peripheral_controller
+backend_group_label: Z-Stage backend (board driver)
+backend_group_name: zstage_backend
+backend_plugins:
+- peripheral_controller.plugin:PeripheralControllerPlugin
+description: 'MicroDrop magnet/Z-Stage peripheral plugin: board driver, status/controls
+    UI, and protocol column'
+device_label: Magnet Peripherals (Z-Stage)
+device_name: magnet_peripherals
+entry_point_name: magnet_peripherals
+extra_force_includes: {}
+has_redis_gated_tests: true
+large_file_exclude: ''
+microdrop_dev_hooks_rev: v0.1.0
+optional_extras: {}
+package_name: magnet-microdrop-plugin
+packages:
+- peripheral_controller
+- peripherals_ui
+- peripheral_protocol_controls
+run_dependencies: {}
+ui_group_label: Z-Stage UI (controls/status dock-pane + protocol column + statusbar
+    icon)
+ui_group_name: zstage_ui
+ui_plugins:
+- peripherals_ui.plugin:PeripheralUiPlugin
+- peripheral_protocol_controls.plugin:PeripheralProtocolControlsPlugin
+version: 1.2.1
