@@ -1,10 +1,22 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
+# Third-party imports.
 import pytest
 from pydantic import ValidationError
 
+# Microdrop package imports.
 from peripheral_controller.datamodels import ZStageConfigData
 
-
 # --- JSON Parsing Tests ---
+
 
 def test_valid_json_input():
     """Test that valid JSON with floats parses correctly."""
@@ -34,13 +46,13 @@ def test_valid_json_coercion():
 
 def test_extra_fields_forbidden():
     """Test that extra fields cause a validation error."""
-    json_str = '''
+    json_str = """
     {
-        "zstage_down_position": 10.0, 
-        "zstage_up_position": 20.0, 
+        "zstage_down_position": 10.0,
+        "zstage_up_position": 20.0,
         "zstage_speed": 5.0
     }
-    '''
+    """
 
     with pytest.raises(ValidationError) as excinfo:
         ZStageConfigData.model_validate_json(json_str)
@@ -92,16 +104,23 @@ def test_up_position_must_be_larger():
     json_invalid_order = '{"zstage_down_position": 20.0, "zstage_up_position": 10.0}'
     with pytest.raises(ValidationError) as excinfo:
         ZStageConfigData.model_validate_json(json_invalid_order)
-    assert "zstage_up_position must be strictly larger than zstage_down_position" in str(excinfo.value)
+    assert (
+        "zstage_up_position must be strictly larger than zstage_down_position"
+        in str(excinfo.value)
+    )
 
     # Case 2: Up == Down (Should Fail, assuming strict inequality)
     json_equal = '{"zstage_down_position": 10.0, "zstage_up_position": 10.0}'
     with pytest.raises(ValidationError) as excinfo:
         ZStageConfigData.model_validate_json(json_equal)
-    assert "zstage_up_position must be strictly larger than zstage_down_position" in str(excinfo.value)
+    assert (
+        "zstage_up_position must be strictly larger than zstage_down_position"
+        in str(excinfo.value)
+    )
 
 
 # --- Python Constructor (Creation) Tests ---
+
 
 def test_create_via_constructor_valid():
     """Test direct instantiation via Python class constructor."""
@@ -114,9 +133,7 @@ def test_create_via_constructor_extra_forbidden():
     """Test that passing extra arguments to constructor raises ValidationError."""
     with pytest.raises(ValidationError) as excinfo:
         ZStageConfigData(
-            zstage_down_position=5.0,
-            zstage_up_position=15.0,
-            invalid_param=123
+            zstage_down_position=5.0, zstage_up_position=15.0, invalid_param=123
         )
     assert "Extra inputs are not permitted" in str(excinfo.value)
 
@@ -125,7 +142,10 @@ def test_create_via_constructor_logic_validation():
     """Test logical constraints (up > down) via constructor."""
     with pytest.raises(ValidationError) as excinfo:
         ZStageConfigData(zstage_down_position=20.0, zstage_up_position=10.0)
-    assert "zstage_up_position must be strictly larger than zstage_down_position" in str(excinfo.value)
+    assert (
+        "zstage_up_position must be strictly larger than zstage_down_position"
+        in str(excinfo.value)
+    )
 
 
 def test_create_via_constructor_negative_validation():
@@ -158,11 +178,11 @@ def test_only_down_position_provided():
     Scenario: Only 'zstage_down_position' is provided.
     Expected: Model is created successfully. 'up' is None. Validator logic is skipped.
     """
-    json_str = '''
+    json_str = """
         {
             "zstage_down_position": 10.0
         }
-        '''
+        """
     model = ZStageConfigData.model_validate_json(json_str)
 
     assert model.zstage_down_position == 10.0
@@ -175,11 +195,11 @@ def test_only_up_position_provided():
     Scenario: Only 'zstage_up_position' is provided.
     Expected: Model is created successfully. 'down' is None. Validator logic is skipped.
     """
-    json_str = '''
+    json_str = """
             {
                 "zstage_up_position": 20.0
             }
-            '''
+            """
     model = ZStageConfigData.model_validate_json(json_str)
 
     assert model.zstage_up_position == 20.0

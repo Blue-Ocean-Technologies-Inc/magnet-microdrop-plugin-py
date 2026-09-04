@@ -1,3 +1,13 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 """Peripheral (Z-Stage) status dock pane, on the status-and-controls template.
 
 The pane contents stay a hand-built Qt view (ZStageView in a scroll area) —
@@ -6,24 +16,37 @@ there is no TraitsUI controller. Everything else comes from the template:
 per-instance model/message-handler assembly, the status-bar icon with theme-
 tracked tooltip, and destroy() teardown for runtime hot unload.
 """
-from traits.api import observe
-from pyface.qt.QtGui import Qt
-from pyface.qt.QtWidgets import QWidget, QScrollArea, QVBoxLayout, QApplication
 
+# Enthought library imports.
+from pyface.qt.QtGui import Qt
+from pyface.qt.QtWidgets import QApplication, QScrollArea, QVBoxLayout, QWidget
+from traits.api import observe
+
+# Microdrop package imports.
 from template_status_and_controls.base_dock_pane import (
-    BaseStatusDockPane, build_status_icon_tooltip, status_bar_icon_font)
+    BaseStatusDockPane,
+    build_status_icon_tooltip,
+    status_bar_icon_font,
+)
+
+# Microdrop style imports.
 from microdrop_style.button_styles import get_tooltip_style
 from microdrop_style.general_style import get_general_style
-from microdrop_style.helpers import is_dark_mode, QT_THEME_NAMES
+from microdrop_style.helpers import QT_THEME_NAMES, is_dark_mode
 from microdrop_style.icons.icons import ICON_STAIRS
 from microdrop_style.label_style import get_label_style
-from microdrop_utils.pyside_helpers import ClickableLabel
-from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
-from logger.logger_service import get_logger
 
-from .consts import PKG, PKG_name, DEVICE_NAME, START_DEVICE_MONITORING, listener_name
-from .model import PeripheralModel
+# Microdrop utils imports.
+from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
+from microdrop_utils.pyside_helpers import ClickableLabel
+
+# Local imports.
+from .consts import DEVICE_NAME, PKG, START_DEVICE_MONITORING, PKG_name, listener_name
 from .message_handler import PeripheralMessageHandler
+from .model import PeripheralModel
+
+# Logger import.
+from logger.logger_service import get_logger
 
 logger = get_logger(__name__)
 
@@ -54,8 +77,8 @@ class PeripheralStatusDockPane(BaseStatusDockPane):
     # Contents — hand-built Qt Z-Stage view in a scroll area               #
     # ------------------------------------------------------------------ #
     def create_contents(self, parent):
-        from .z_stage.view_model import ZStageViewModel, ZStageViewModelSignals
         from .z_stage.view import ZStageView
+        from .z_stage.view_model import ZStageViewModel, ZStageViewModelSignals
 
         view_signals = ZStageViewModelSignals()
         view_model = ZStageViewModel(model=self.model, view_signals=view_signals)
@@ -77,13 +100,13 @@ class PeripheralStatusDockPane(BaseStatusDockPane):
         # connection is undone in destroy() so a hot-unloaded pane doesn't
         # leave a dangling slot firing into a destroyed widget.
         self._apply_theme_style(
-            Qt.ColorScheme.Dark if is_dark_mode() else Qt.ColorScheme.Light)
-        QApplication.styleHints().colorSchemeChanged.connect(
-            self._apply_theme_style)
+            Qt.ColorScheme.Dark if is_dark_mode() else Qt.ColorScheme.Light
+        )
+        QApplication.styleHints().colorSchemeChanged.connect(self._apply_theme_style)
 
         return scroll_area
 
-    def _apply_theme_style(self, theme: 'Qt.ColorScheme'):
+    def _apply_theme_style(self, theme: "Qt.ColorScheme"):
         """Restyle the pane contents for the given application theme."""
         if self.control is None:
             return
@@ -97,9 +120,10 @@ class PeripheralStatusDockPane(BaseStatusDockPane):
     def destroy(self):
         try:
             QApplication.styleHints().colorSchemeChanged.disconnect(
-                self._apply_theme_style)
+                self._apply_theme_style
+            )
         except (RuntimeError, TypeError):
-            pass                        # never connected / already gone
+            pass  # never connected / already gone
         super().destroy()
 
     # ------------------------------------------------------------------ #
@@ -129,8 +153,9 @@ class PeripheralStatusDockPane(BaseStatusDockPane):
                 (self.model.DISCONNECTED_COLOR, "Disconnected"),
                 (self.model.CONNECTED_COLOR, "Connected"),
             ],
-            hint="Searching for device…" if self.model.searching
-                 else "Click to search for a connection.",
+            hint="Searching for device…"
+            if self.model.searching
+            else "Click to search for a connection.",
         )
 
     def _search_connection(self):
@@ -148,6 +173,8 @@ class PeripheralStatusDockPane(BaseStatusDockPane):
         when no scan is currently active — and flip the tooltip to match."""
         if self.status_bar_icon is not None:
             self.status_bar_icon.setCursor(
-                Qt.CursorShape.ArrowCursor if self.model.searching
-                else Qt.CursorShape.PointingHandCursor)
+                Qt.CursorShape.ArrowCursor
+                if self.model.searching
+                else Qt.CursorShape.PointingHandCursor
+            )
         self._refresh_status_bar_tooltip()

@@ -1,19 +1,38 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
+# Standard library imports.
 import json
 import time
 from functools import wraps
-from pydantic import ValidationError
 
-from traits.api import provides, HasTraits, Instance
+# Enthought library imports.
+from traits.api import HasTraits, Instance, provides
 
-from microdrop_utils.dramatiq_peripheral_serial_proxy import DramatiqPeripheralSerialProxy
+# Microdrop utils imports.
+from microdrop_utils.dramatiq_peripheral_serial_proxy import (
+    DramatiqPeripheralSerialProxy,
+)
 from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
 
-from ..interfaces.i_peripheral_control_mixin_service import IPeripheralControlMixinService
+# Local imports.
+from ..consts import MAGNET_APPLIED, MIN_ZSTAGE_HEIGHT_MM, ZSTAGE_POSITION_UPDATED
 from ..datamodels import ZStageConfigData
-from ..consts import ZSTAGE_POSITION_UPDATED, MIN_ZSTAGE_HEIGHT_MM, MAGNET_APPLIED
+from ..interfaces.i_peripheral_control_mixin_service import (
+    IPeripheralControlMixinService,
+)
 from ..preferences import PeripheralPreferences
 
+# Logger import.
 from logger.logger_service import get_logger
+
 logger = get_logger(__name__)
 
 
@@ -26,7 +45,9 @@ def thread_lock_with_error_handling(func):
     @wraps(func)
     def wrapped(self, *args, **kwargs):
         # 'self' will be the instance of ZStageStatesSetterMixinService
-        logger.info(f"Calling method: {func.__name__} with args={args}, kwargs={kwargs}")
+        logger.info(
+            f"Calling method: {func.__name__} with args={args}, kwargs={kwargs}"
+        )
 
         try:
             # Access the proxy from the instance
@@ -41,6 +62,7 @@ def thread_lock_with_error_handling(func):
             raise
 
     return wrapped
+
 
 def zstage_motor_context(func):
     """
@@ -63,6 +85,7 @@ def zstage_motor_context(func):
 
     return wrapped
 
+
 def publish_position_update(func):
     """
     After position change, publish_update
@@ -80,7 +103,10 @@ def publish_position_update(func):
             if new_pos != old_pos:
                 publish_message(f"{new_pos}", ZSTAGE_POSITION_UPDATED)
 
-            logger.info(f"Method {func.__name__} finished. Positions -> new: {self.proxy.zstage.position}, old: {old_pos}")
+            logger.info(
+                f"Method {func.__name__} finished. Positions -> "
+                f"new: {new_pos}, old: {old_pos}"
+            )
 
         return result
 
@@ -93,11 +119,12 @@ class ZStageStatesSetterMixinService(HasTraits):
     """
     A mixin Class that adds methods to set states on a peripheral z-stage.
     """
+
     proxy = Instance(DramatiqPeripheralSerialProxy)
 
-    ######################################## Methods to Expose #############################################
+    ################################# Methods to Expose ################################
 
-    ################################### Exposed Methods ###############################
+    ############################### Exposed Methods ################################
 
     @thread_lock_with_error_handling
     @zstage_motor_context
@@ -154,7 +181,7 @@ class ZStageStatesSetterMixinService(HasTraits):
             if not on:
                 # Retract sequence — matches legacy publish_magnet_home()
                 self.proxy.zstage.down()
-                time.sleep(0.3)   # settling time before next command
+                time.sleep(0.3)  # settling time before next command
                 self.proxy.zstage.home()
             elif height_mm < MIN_ZSTAGE_HEIGHT_MM:
                 # Sentinel = "use live pref" (preserves legacy 'Default'
@@ -198,6 +225,5 @@ class ZStageStatesSetterMixinService(HasTraits):
             logger.error(
                 f"Could not process zstage config updates. Message was {message}.\n"
                 f"Error: {e}",
-                exc_info=True
+                exc_info=True,
             )
-

@@ -1,6 +1,18 @@
-from traits.api import HasTraits, Str, Bool, Float, observe
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
 
-from .consts import disconnected_color, connected_color
+# Enthought library imports.
+from traits.api import Bool, Float, HasTraits, Str, observe
+
+# Local imports.
+from .consts import connected_color, disconnected_color
 
 
 class PeripheralModel(HasTraits):
@@ -15,7 +27,8 @@ class PeripheralModel(HasTraits):
     status = Bool(False)
     position = Float(0.0)  # Position in mm
     realtime_mode = Bool(False)
-    # True once a connection search has been requested (by button or menu action) this session.
+    # True once a connection search has been requested (by button or menu
+    # action) this session.
     search_requested = Bool(False)
     # True while the backend's monitor thread is actively scanning for the board
     # (driven by the ZStage/signals/searching signal). Gates the status-icon click.

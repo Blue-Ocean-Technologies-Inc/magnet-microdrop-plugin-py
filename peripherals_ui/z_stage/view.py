@@ -1,25 +1,40 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
+# Standard library imports.
 import sys
 
-from PySide6.QtCore import Slot, Qt
+# Third-party imports.
+from PySide6.QtCore import Qt, Slot
 from PySide6.QtWidgets import (
     QApplication,
-    QWidget,
-    QVBoxLayout,
+    QDoubleSpinBox,
     QHBoxLayout,
     QLabel,
-    QPushButton,
     QMainWindow,
-    QDoubleSpinBox,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
 )
 
+# Microdrop package imports.
 from dropbot_status_and_controls.consts import (
     connected_color,
     connected_no_device_color,
     disconnected_color,
 )
-from microdrop_utils.pyside_helpers import CollapsibleVStackBox
-from peripheral_controller.consts import MIN_ZSTAGE_HEIGHT_MM, MAX_ZSTAGE_HEIGHT_MM
+from peripheral_controller.consts import MAX_ZSTAGE_HEIGHT_MM, MIN_ZSTAGE_HEIGHT_MM
 from peripherals_ui.z_stage.view_model import ZStageViewModel
+
+# Microdrop utils imports.
+from microdrop_utils.pyside_helpers import CollapsibleVStackBox
 
 _STATUS_DOT_DIAMETER_PX = 14
 
@@ -44,7 +59,9 @@ class ZStageView(QWidget):
         # Traffic-light indicator. Doubles as the "Search Connection" trigger:
         # yellow = clickable (search available), grey = disconnected, green = connected.
         self.status_indicator = QPushButton()
-        self.status_indicator.setFixedSize(_STATUS_DOT_DIAMETER_PX, _STATUS_DOT_DIAMETER_PX)
+        self.status_indicator.setFixedSize(
+            _STATUS_DOT_DIAMETER_PX, _STATUS_DOT_DIAMETER_PX
+        )
         self.status_indicator.setFlat(True)
         self.status_indicator.setFocusPolicy(Qt.NoFocus)
         self._status_active = False
@@ -71,7 +88,9 @@ class ZStageView(QWidget):
         # Create a container widget for all the contents of the group
         status_contents_container = QWidget()
 
-        status_layout = QHBoxLayout(status_contents_container)  # Set layout on container
+        status_layout = QHBoxLayout(
+            status_contents_container
+        )  # Set layout on container
 
         status_layout.addWidget(self.status_indicator)
         status_layout.addWidget(self.status_label)
@@ -102,7 +121,9 @@ class ZStageView(QWidget):
         controls_layout.addLayout(controls_buttons_layout)
         controls_layout.addLayout(position_controls_layout)
 
-        control_group = CollapsibleVStackBox("Controls", [self.control_contents_container])
+        control_group = CollapsibleVStackBox(
+            "Controls", [self.control_contents_container]
+        )
 
         #############################################################
 
@@ -124,7 +145,9 @@ class ZStageView(QWidget):
         self.view_signals.status_text_changed.connect(self.on_status_text_changed)
 
         # Connect the formatted text signal to our new display label
-        self.view_signals.position_text_changed.connect(self.current_position_label.setText)
+        self.view_signals.position_text_changed.connect(
+            self.current_position_label.setText
+        )
 
         # Connect the float value signal to our custom slot to update the spinbox
         self.view_signals.position_value_changed.connect(self.on_position_value_changed)
@@ -134,7 +157,8 @@ class ZStageView(QWidget):
 
     @Slot(str)
     def on_status_text_changed(self, text: str):
-        """Drive the traffic-light off the status text ('Status: Active' / 'Status: Inactive')."""
+        """Drive the traffic-light off the status text ('Status: Active' /
+        'Status: Inactive')."""
         self._status_active = "Active" in text
         self._refresh_status_indicator()
 
@@ -171,7 +195,8 @@ class ZStageView(QWidget):
     def on_position_value_changed(self, value: float):
         """Slot to update the spinbox value from the ViewModel."""
         # Block signals to prevent an infinite feedback loop
-        # (setValue -> valueChanged -> set_position -> model change -> signal -> setValue)
+        # (setValue -> valueChanged -> set_position -> model change ->
+        # signal -> setValue)
         self.position_spinbox.blockSignals(True)
         self.position_spinbox.setValue(value)
         self.position_spinbox.blockSignals(False)
@@ -187,13 +212,15 @@ class ZStageView(QWidget):
         self.position_spinbox.setEnabled(enabled)
         self.set_position_label.setEnabled(enabled)
 
+
 # ----------------------------------------------------------------------------
 # 5. Main Application / Test Harness
 # ----------------------------------------------------------------------------
 if __name__ == "__main__":
     from peripherals_ui.model import PeripheralModel
 
-    from logger.logger_service import init_logger, get_logger
+    from logger.logger_service import get_logger, init_logger
+
     logger = get_logger(__name__)
     init_logger()
 

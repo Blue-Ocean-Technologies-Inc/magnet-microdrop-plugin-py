@@ -1,33 +1,51 @@
-import json
-
-from traits.api import observe, List
-from traitsui.api import VGroup, View, Item
-from envisage.ui.tasks.api import PreferencesCategory
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
 
 # Enthought library imports.
-from envisage.ui.tasks.api import PreferencesPane
+from envisage.ui.tasks.api import PreferencesCategory, PreferencesPane
+from traits.api import List, observe
+from traitsui.api import Item, View
 
-from microdrop_style.text_styles import preferences_group_style_sheet
-from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
-from microdrop_utils.preferences_UI_helpers import create_item_label_group, create_grid_group
-from traitsui.api import Item
-from logger.logger_service import get_logger
+# Microdrop package imports.
 from peripheral_controller.consts import UPDATE_CONFIG
 from peripheral_controller.datamodels import ZStageConfigData
+from peripheral_controller.preferences import (
+    PeripheralPreferences,
+    z_stage_preferences_names,
+    z_stage_trait_name_mapping,
+)
+
+# Microdrop style imports.
+from microdrop_style.text_styles import preferences_group_style_sheet
+
+# Microdrop utils imports.
+from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
+from microdrop_utils.preferences_UI_helpers import (
+    create_grid_group,
+)
+
+# Logger import.
+from logger.logger_service import get_logger
 
 logger = get_logger(__name__)
-
-from peripheral_controller.preferences import PeripheralPreferences, z_stage_preferences_names, z_stage_trait_name_mapping
 
 peripherals_tab = PreferencesCategory(
     id="microdrop.peripheral_settings",
     name="Peripheral Settings",
-    after="microdrop.dropbot_settings"
+    after="microdrop.dropbot_settings",
 )
 
 
 class PeripheralPreferencesPane(PreferencesPane):
-    """Device Viewer preferences pane based on enthought envisage's The preferences pane for the Attractors application."""
+    """Device Viewer preferences pane based on enthought envisage's The
+    preferences pane for the Attractors application."""
 
     #### 'PreferencesPane' interface ##########################################
 
@@ -49,8 +67,10 @@ class PeripheralPreferencesPane(PreferencesPane):
     view = View(
         Item("_"),  # Separator
         settings_grid,
-        Item("_"),  # Separator to space this out from further contributions to the pane.
-        resizable=True
+        Item(
+            "_"
+        ),  # Separator to space this out from further contributions to the pane.
+        resizable=True,
     )
 
     @observe("model:[down_height_mm, up_height_mm]")
@@ -61,22 +81,27 @@ class PeripheralPreferencesPane(PreferencesPane):
         super().apply(info)
 
         if self._changed_preferences:
-
             # get changed data dict with correct config names and values
-            updated_config_dict = {z_stage_trait_name_mapping.get(el): getattr(self.model, el) for el in self._changed_preferences}
+            updated_config_dict = {
+                z_stage_trait_name_mapping.get(el): getattr(self.model, el)
+                for el in self._changed_preferences
+            }
 
             # round values to 2 digits past decimal
-            updated_config_dict = {key: round(float(val), 2) for key, val in updated_config_dict.items()}
+            updated_config_dict = {
+                key: round(float(val), 2) for key, val in updated_config_dict.items()
+            }
 
             # get valid json message to send using model.
             data_model = ZStageConfigData(**updated_config_dict)
             json_msg = data_model.model_dump_json(exclude_none=True)
 
-            logger.info(f"Preferences changed for z_stage: {json_msg}. Publishing change")
+            logger.info(
+                f"Preferences changed for z_stage: {json_msg}. Publishing change"
+            )
             publish_message(json_msg, UPDATE_CONFIG)
 
         else:
-            logger.debug(f"No changes made for z_stage")
+            logger.debug("No changes made for z_stage")
 
         self._changed_preferences.clear()
-

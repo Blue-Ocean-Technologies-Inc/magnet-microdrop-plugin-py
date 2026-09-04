@@ -1,26 +1,37 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
+# Microdrop package imports.
 from peripheral_device_controller_base.consts import (
-    upload_firmware_topic,
     cancel_firmware_upload_topic,
-    firmware_upload_started_topic,
-    firmware_upload_log_topic,
     firmware_upload_finished_topic,
+    firmware_upload_log_topic,
+    firmware_upload_started_topic,
+    upload_firmware_topic,
 )
 
 # This module's package.
-PKG = '.'.join(__name__.split('.')[:-1])
+PKG = ".".join(__name__.split(".")[:-1])
 PKG_name = PKG.title().replace("_", " ")
 
 # mr box hardware id
-MR_BOX_HWID = 'VID:PID=0403:6015'
+MR_BOX_HWID = "VID:PID=0403:6015"
 
 DEVICE_NAME = "ZStage"
 
 # Topics published by this plugin
-CONNECTED = f'{DEVICE_NAME}/signals/connected'
-DISCONNECTED = f'{DEVICE_NAME}/signals/disconnected'
+CONNECTED = f"{DEVICE_NAME}/signals/connected"
+DISCONNECTED = f"{DEVICE_NAME}/signals/disconnected"
 # JSON bool: True while scanning for the board, False once connected/stopped.
-SEARCHING = f'{DEVICE_NAME}/signals/searching'
-ZSTAGE_POSITION_UPDATED = f'{DEVICE_NAME}/signals/position_updated'
+SEARCHING = f"{DEVICE_NAME}/signals/searching"
+ZSTAGE_POSITION_UPDATED = f"{DEVICE_NAME}/signals/position_updated"
 
 # Service Request Topics
 START_DEVICE_MONITORING = f"{DEVICE_NAME}/requests/start_device_monitoring"
@@ -59,7 +70,7 @@ MAGNET_APPLIED = f"{DEVICE_NAME}/signals/magnet_applied"
 CONNECTION_STATE_KEY = f"{DEVICE_NAME}.connection_active"
 
 # Error Topics
-ERROR = f'{DEVICE_NAME}/error'
+ERROR = f"{DEVICE_NAME}/error"
 
 # Topics actor declared by plugin subscribes to
 ACTOR_TOPIC_DICT = {
@@ -67,7 +78,11 @@ ACTOR_TOPIC_DICT = {
         f"{DEVICE_NAME}/requests/#",
         CONNECTED,
         DISCONNECTED,
-    ]}
+    ]
+}
 
-DEFAULT_DOWN_HEIGHT_MM, DEFAULT_UP_HEIGHT_MM,  = 0.5, 23.0
+(
+    DEFAULT_DOWN_HEIGHT_MM,
+    DEFAULT_UP_HEIGHT_MM,
+) = 0.5, 23.0
 MIN_ZSTAGE_HEIGHT_MM, MAX_ZSTAGE_HEIGHT_MM = 0.5, 28.0
