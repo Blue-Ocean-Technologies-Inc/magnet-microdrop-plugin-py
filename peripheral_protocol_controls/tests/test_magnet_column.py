@@ -1,13 +1,16 @@
 """Tests for the magnet compound column — model, custom view, factory."""
 
-from unittest.mock import patch
+import json
+from unittest.mock import MagicMock, patch
 
 from pyface.qt.QtCore import Qt
 from traits.api import Bool, Float, HasTraits
 
 from peripheral_controller.consts import (
+    MAGNET_APPLIED,
     MAX_ZSTAGE_HEIGHT_MM,
     MIN_ZSTAGE_HEIGHT_MM,
+    PROTOCOL_SET_MAGNET,
 )
 from peripheral_protocol_controls.consts import SET_MAGNET_FIELD_ID
 from peripheral_protocol_controls.protocol_columns.magnet_column import (
@@ -134,15 +137,6 @@ def test_make_magnet_column_returns_compound_with_three_fields():
     assert isinstance(cc, CompoundColumn)
     ids = [s.field_id for s in cc.model.field_specs()]
     assert ids == [SET_MAGNET_FIELD_ID, "magnet_on", "magnet_height_mm"]
-
-
-import json
-from unittest.mock import MagicMock
-
-from peripheral_controller.consts import (
-    MAGNET_APPLIED,
-    PROTOCOL_SET_MAGNET,
-)
 
 
 def test_magnet_handler_priority_20():

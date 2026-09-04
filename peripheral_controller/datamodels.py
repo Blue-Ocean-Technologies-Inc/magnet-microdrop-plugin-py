@@ -26,7 +26,8 @@ class ZStageConfigData(BaseModel):
         ):
             if self.zstage_up_position <= self.zstage_down_position:
                 raise ValueError(
-                    "zstage_up_position must be strictly larger than zstage_down_position"
+                    "zstage_up_position must be strictly larger than "
+                    "zstage_down_position"
                 )
 
         return self

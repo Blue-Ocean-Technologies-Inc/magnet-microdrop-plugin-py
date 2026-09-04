@@ -36,8 +36,8 @@ def test_extra_fields_forbidden():
     """Test that extra fields cause a validation error."""
     json_str = """
     {
-        "zstage_down_position": 10.0, 
-        "zstage_up_position": 20.0, 
+        "zstage_down_position": 10.0,
+        "zstage_up_position": 20.0,
         "zstage_speed": 5.0
     }
     """

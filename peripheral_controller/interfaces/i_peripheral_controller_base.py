@@ -19,8 +19,9 @@ class IPeripheralControllerBase(IDramatiqControllerBase):
         DramatiqPeripheralSerialProxy, desc="The DramatiqSerialProxy object"
     )
     connection_active = Bool(
-        desc="Specifies if the controller is actively listening to commands or not. So if the "
-        "connection is not there, no commands will be processed except searching for s connection"
+        desc="Specifies if the controller is actively listening to commands "
+        "or not. So if the connection is not there, no commands will be "
+        "processed except searching for s connection"
     )
     preferences = Instance(
         PeripheralPreferences,

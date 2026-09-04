@@ -14,12 +14,11 @@ from apscheduler.triggers.interval import IntervalTrigger
 from traits.api import Callable, HasTraits, List, Str, Union
 
 from microdrop_utils.dramatiq_pub_sub_helpers import MessageRouterActor, publish_message
+from microdrop_utils.hardware_device_monitoring_helpers import check_devices_available
 
 from logger.logger_service import get_logger
 
 logger = get_logger(__name__)
-
-from microdrop_utils.hardware_device_monitoring_helpers import check_devices_available
 
 magnetic_state_hwids = ["VID:PID=0403:6015"]
 
@@ -37,13 +36,15 @@ class PeripheralDeviceConnectionMonitor(HasTraits):
         @dramatiq.actor
         def check_devices_available_actor():
             """
-            Method to find the USB port of the device with hwid in hwids_to_check if it is connected.
+            Method to find the USB port of the device with hwid in
+            hwids_to_check if it is connected.
             """
             try:
                 port = check_devices_available(magnetic_state_hwids)
 
                 if port is None:
-                    # reset the port names list to capture a reconnection in the same port.
+                    # reset the port names list to capture a reconnection
+                    # in the same port.
                     self.port = None
                     publish_message(
                         "No device available for connection", "peripheral/error"

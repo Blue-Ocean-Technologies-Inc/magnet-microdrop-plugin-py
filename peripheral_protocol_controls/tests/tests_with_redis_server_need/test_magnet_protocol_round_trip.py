@@ -22,30 +22,35 @@ remove_middleware_from_dramatiq_broker(
     broker=dramatiq.get_broker(),
 )
 
-from peripheral_controller.consts import (
+# These imports must come after the middleware strip above: several of
+# these modules use the Dramatiq broker at import time, so importing them
+# before the Prometheus middleware is removed would re-register it.
+from peripheral_controller.consts import (  # noqa: E402
     MAGNET_APPLIED,
     PROTOCOL_SET_MAGNET,
 )
-from peripheral_protocol_controls.protocol_columns.magnet_column import (
+from peripheral_protocol_controls.protocol_columns.magnet_column import (  # noqa: E402
     make_magnet_column,
 )
-from pluggable_protocol_tree.builtins.duration_column import (
+from pluggable_protocol_tree.builtins.duration_column import (  # noqa: E402
     make_duration_column,
 )
-from pluggable_protocol_tree.builtins.electrodes_column import (
+from pluggable_protocol_tree.builtins.electrodes_column import (  # noqa: E402
     make_electrodes_column,
 )
-from pluggable_protocol_tree.builtins.id_column import make_id_column
-from pluggable_protocol_tree.builtins.name_column import make_name_column
-from pluggable_protocol_tree.builtins.routes_column import make_routes_column
-from pluggable_protocol_tree.builtins.type_column import make_type_column
-from pluggable_protocol_tree.consts import (
+from pluggable_protocol_tree.builtins.id_column import make_id_column  # noqa: E402
+from pluggable_protocol_tree.builtins.name_column import make_name_column  # noqa: E402
+from pluggable_protocol_tree.builtins.routes_column import make_routes_column  # noqa: E402
+from pluggable_protocol_tree.builtins.type_column import make_type_column  # noqa: E402
+from pluggable_protocol_tree.consts import (  # noqa: E402
     ELECTRODES_STATE_APPLIED,
     ELECTRODES_STATE_CHANGE,
 )
-from pluggable_protocol_tree.execution.executor import ProtocolExecutor
-from pluggable_protocol_tree.models._compound_adapters import _expand_compound
-from pluggable_protocol_tree.models.row_manager import RowManager
+from pluggable_protocol_tree.execution.executor import ProtocolExecutor  # noqa: E402
+from pluggable_protocol_tree.models._compound_adapters import (  # noqa: E402
+    _expand_compound,
+)
+from pluggable_protocol_tree.models.row_manager import RowManager  # noqa: E402
 
 # Recording spy actor — captures every relevant topic with timestamps
 # so we can assert ordering.

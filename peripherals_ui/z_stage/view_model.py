@@ -5,6 +5,13 @@ from PySide6.QtCore import QObject, Signal
 from traits.has_traits import HasTraits, observe
 from traits.trait_types import Instance
 
+from peripheral_controller.consts import (
+    GO_HOME,
+    MOVE_DOWN,
+    MOVE_UP,
+    SET_POSITION,
+    START_DEVICE_MONITORING,
+)
 from peripherals_ui.model import PeripheralModel
 
 from microdrop_utils.decorators import debounce
@@ -13,14 +20,6 @@ from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
 from logger.logger_service import get_logger
 
 logger = get_logger(__name__)
-
-from peripheral_controller.consts import (
-    GO_HOME,
-    MOVE_DOWN,
-    MOVE_UP,
-    SET_POSITION,
-    START_DEVICE_MONITORING,
-)
 
 
 def log_function_call_and_exceptions(func):
@@ -146,7 +145,8 @@ class ZStageViewModel(HasTraits):
 
     @observe("model:search_requested")
     def _on_search_requested_changed(self, event):
-        """Disable the search button once a search has been requested (button or menu)."""
+        """Disable the search button once a search has been requested (button
+        or menu)."""
         self.view_signals.search_enabled_changed.emit(not event.new)
 
     # --- Initializer ---

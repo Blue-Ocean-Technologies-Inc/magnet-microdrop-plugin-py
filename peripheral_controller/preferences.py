@@ -1,13 +1,7 @@
 from apptools.preferences.api import PreferencesHelper
 from traits.api import Dict, Property
 
-from logger.logger_service import get_logger
-
-logger = get_logger(__name__)
-
 from microdrop_application.helpers import get_microdrop_redis_globals_manager
-
-app_globals = get_microdrop_redis_globals_manager()
 
 from microdrop_utils.traitsui_qt_helpers import RangeWithViewHints
 
@@ -17,6 +11,11 @@ from .consts import (
     MAX_ZSTAGE_HEIGHT_MM,
     MIN_ZSTAGE_HEIGHT_MM,
 )
+
+from logger.logger_service import get_logger
+
+logger = get_logger(__name__)
+app_globals = get_microdrop_redis_globals_manager()
 
 z_stage_preferences_names = ["down_height_mm", "up_height_mm"]
 

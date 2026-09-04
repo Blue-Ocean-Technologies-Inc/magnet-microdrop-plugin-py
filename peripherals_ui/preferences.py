@@ -5,6 +5,11 @@ from traitsui.api import Item, View
 
 from peripheral_controller.consts import UPDATE_CONFIG
 from peripheral_controller.datamodels import ZStageConfigData
+from peripheral_controller.preferences import (
+    PeripheralPreferences,
+    z_stage_preferences_names,
+    z_stage_trait_name_mapping,
+)
 
 from microdrop_style.text_styles import preferences_group_style_sheet
 
@@ -17,12 +22,6 @@ from logger.logger_service import get_logger
 
 logger = get_logger(__name__)
 
-from peripheral_controller.preferences import (
-    PeripheralPreferences,
-    z_stage_preferences_names,
-    z_stage_trait_name_mapping,
-)
-
 peripherals_tab = PreferencesCategory(
     id="microdrop.peripheral_settings",
     name="Peripheral Settings",
@@ -31,7 +30,8 @@ peripherals_tab = PreferencesCategory(
 
 
 class PeripheralPreferencesPane(PreferencesPane):
-    """Device Viewer preferences pane based on enthought envisage's The preferences pane for the Attractors application."""
+    """Device Viewer preferences pane based on enthought envisage's The
+    preferences pane for the Attractors application."""
 
     #### 'PreferencesPane' interface ##########################################
 

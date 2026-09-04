@@ -1,16 +1,15 @@
 import os
 
 from dropbot_controller.consts import SET_REALTIME_MODE
+from peripheral_controller.consts import DEVICE_NAME, START_DEVICE_MONITORING
+
+from microdrop_style.colors import GREY, SUCCESS_COLOR
 
 # # This module's package.
 PKG = ".".join(__name__.split(".")[:-1])
 PKG_name = PKG.title().replace("_", " ").replace("Ui", "UI")
 
 current_folder_path = os.path.dirname(os.path.abspath(__file__))
-
-from peripheral_controller.consts import DEVICE_NAME, START_DEVICE_MONITORING
-
-from microdrop_style.colors import GREY, SUCCESS_COLOR
 
 listener_name = f"{PKG}_listener"
 

@@ -89,7 +89,8 @@ def publish_position_update(func):
                 publish_message(f"{new_pos}", ZSTAGE_POSITION_UPDATED)
 
             logger.info(
-                f"Method {func.__name__} finished. Positions -> new: {self.proxy.zstage.position}, old: {old_pos}"
+                f"Method {func.__name__} finished. Positions -> "
+                f"new: {new_pos}, old: {old_pos}"
             )
 
         return result
@@ -106,9 +107,9 @@ class ZStageStatesSetterMixinService(HasTraits):
 
     proxy = Instance(DramatiqPeripheralSerialProxy)
 
-    ######################################## Methods to Expose #############################################
+    ################################# Methods to Expose ################################
 
-    ################################### Exposed Methods ###############################
+    ############################### Exposed Methods ################################
 
     @thread_lock_with_error_handling
     @zstage_motor_context

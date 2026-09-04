@@ -143,7 +143,8 @@ class ZStageView(QWidget):
 
     @Slot(str)
     def on_status_text_changed(self, text: str):
-        """Drive the traffic-light off the status text ('Status: Active' / 'Status: Inactive')."""
+        """Drive the traffic-light off the status text ('Status: Active' /
+        'Status: Inactive')."""
         self._status_active = "Active" in text
         self._refresh_status_indicator()
 
@@ -180,7 +181,8 @@ class ZStageView(QWidget):
     def on_position_value_changed(self, value: float):
         """Slot to update the spinbox value from the ViewModel."""
         # Block signals to prevent an infinite feedback loop
-        # (setValue -> valueChanged -> set_position -> model change -> signal -> setValue)
+        # (setValue -> valueChanged -> set_position -> model change ->
+        # signal -> setValue)
         self.position_spinbox.blockSignals(True)
         self.position_spinbox.setValue(value)
         self.position_spinbox.blockSignals(False)

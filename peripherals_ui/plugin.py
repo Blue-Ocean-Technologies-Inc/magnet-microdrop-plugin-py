@@ -80,5 +80,6 @@ class PeripheralUiPlugin(BaseStatusPlugin):
         else:
             logger.info(
                 "Peripheral Board not connected. To start search, goto tools menu:"
-                "Tools -> Peripherals -> Z-Stage -> Search Connection or use the peripheral UI Dock Pane button."
+                "Tools -> Peripherals -> Z-Stage -> Search Connection or use "
+                "the peripheral UI Dock Pane button."
             )
