@@ -1,8 +1,19 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 # Enthought library imports.
 from envisage.ui.tasks.api import PreferencesCategory, PreferencesPane
 from traits.api import List, observe
 from traitsui.api import Item, View
 
+# Microdrop package imports.
 from peripheral_controller.consts import UPDATE_CONFIG
 from peripheral_controller.datamodels import ZStageConfigData
 from peripheral_controller.preferences import (
@@ -11,13 +22,16 @@ from peripheral_controller.preferences import (
     z_stage_trait_name_mapping,
 )
 
+# Microdrop style imports.
 from microdrop_style.text_styles import preferences_group_style_sheet
 
+# Microdrop utils imports.
 from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
 from microdrop_utils.preferences_UI_helpers import (
     create_grid_group,
 )
 
+# Logger import.
 from logger.logger_service import get_logger
 
 logger = get_logger(__name__)

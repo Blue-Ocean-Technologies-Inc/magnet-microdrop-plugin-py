@@ -1,3 +1,13 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 """In-process Dramatiq actor that stands in for the ZStage proxy
 for protocol-driven magnet engage/retract. Subscribes to
 PROTOCOL_SET_MAGNET, sleeps a small 'physical movement' delay, then
@@ -6,17 +16,21 @@ publishes the matching MAGNET_APPLIED ack.
 Mirrors dropbot_protocol_controls.demos.voltage_frequency_responder.
 """
 
+# Standard library imports.
 import json
 import logging
 import time
 
+# Third-party imports.
 import dramatiq
 
+# Microdrop package imports.
 from peripheral_controller.consts import (
     MAGNET_APPLIED,
     PROTOCOL_SET_MAGNET,
 )
 
+# Microdrop utils imports.
 from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
 
 logger = logging.getLogger(__name__)

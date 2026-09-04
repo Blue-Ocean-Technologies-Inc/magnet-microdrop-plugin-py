@@ -1,3 +1,13 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 """Z-Stage options model for the shared firmware-upload dialog.
 
 The mr-box peripheral board is flashed by the firmware bundled inside the
@@ -7,13 +17,16 @@ timeout: the shared model is narrowed to exactly that, and the ride-along
 Pico-only payload fields are pinned to their defaults.
 """
 
+# Third-party imports.
 import serial.tools.list_ports
 
+# Microdrop package imports.
 from peripheral_controller.consts import (
     BUNDLED_MR_BOX_FIRMWARE_DESCRIPTION,
     MR_BOX_HWID,
 )
 
+# Microdrop utils imports.
 from microdrop_utils.firmware_upload_dialog.consts import PORT_ENTRY_SEPARATOR
 from microdrop_utils.firmware_upload_dialog.model import FirmwareUploadModel
 

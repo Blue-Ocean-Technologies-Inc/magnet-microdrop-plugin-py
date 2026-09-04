@@ -1,3 +1,13 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 """End-to-end test: a protocol with magnet + electrodes runs against
 the in-process magnet responder, and the priority-20 ack lands
 strictly before any priority-30 electrode publish.
@@ -5,14 +15,16 @@ strictly before any priority-30 electrode publish.
 Requires a running Redis server on localhost:6379.
 """
 
+# Standard library imports.
 import json
 import time
 from threading import Lock
 
+# Third-party imports.
 import dramatiq
 import pytest
 
-# Strip Prometheus middleware before importing anything that uses the broker.
+# Microdrop utils imports.
 from microdrop_utils.broker_server_helpers import (
     remove_middleware_from_dramatiq_broker,
 )
@@ -40,7 +52,9 @@ from pluggable_protocol_tree.builtins.electrodes_column import (  # noqa: E402
 )
 from pluggable_protocol_tree.builtins.id_column import make_id_column  # noqa: E402
 from pluggable_protocol_tree.builtins.name_column import make_name_column  # noqa: E402
-from pluggable_protocol_tree.builtins.routes_column import make_routes_column  # noqa: E402
+from pluggable_protocol_tree.builtins.routes_column import (  # noqa: E402
+    make_routes_column,
+)
 from pluggable_protocol_tree.builtins.type_column import make_type_column  # noqa: E402
 from pluggable_protocol_tree.consts import (  # noqa: E402
     ELECTRODES_STATE_APPLIED,

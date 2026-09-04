@@ -1,3 +1,13 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 """Magnet compound column — engages/retracts the peripheral z-stage
 for an experiment step. Three coupled cells (set_magnet Bool +
 magnet_on Bool + magnet_height_mm Float) sharing one model + one handler
@@ -14,11 +24,14 @@ when it sees a sub-MIN value. Preserves legacy behaviour where pref
 changes affect 'Default' steps without re-editing the protocol.
 """
 
+# Standard library imports.
 import json
 
+# Enthought library imports.
 from pyface.qt.QtCore import Qt
 from traits.api import Bool, Float
 
+# Microdrop package imports.
 from peripheral_controller.consts import (
     MAGNET_APPLIED,
     MAX_ZSTAGE_HEIGHT_MM,
@@ -37,8 +50,10 @@ from pluggable_protocol_tree.views.columns.spinbox import (
     DoubleSpinBoxColumnView,
 )
 
+# Microdrop utils imports.
 from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
 
+# Local imports.
 from ..consts import SET_MAGNET_FIELD_ID
 
 # Sentinel value below the minimum hardware position; the spinbox

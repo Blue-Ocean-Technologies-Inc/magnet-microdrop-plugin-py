@@ -1,7 +1,18 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 """Z-Stage view for the shared firmware-upload dialog: only a port section
 (the firmware is bundled — there is no source to pick and no Pico options)
 next to the shared log console."""
 
+# Enthought library imports.
 from traitsui.api import (
     HGroup,
     HSplit,
@@ -14,6 +25,7 @@ from traitsui.api import (
     spring,
 )
 
+# Microdrop style imports.
 from microdrop_style.icons.icons import (
     ICON_AUTOMATION,
     ICON_DELETE,
@@ -21,6 +33,7 @@ from microdrop_style.icons.icons import (
     ICON_USB,
 )
 
+# Microdrop utils imports.
 from microdrop_utils.firmware_upload_dialog.view import LogViewEditor
 from microdrop_utils.traitsui_qt_helpers import (
     HoverScrollEnumEditor,

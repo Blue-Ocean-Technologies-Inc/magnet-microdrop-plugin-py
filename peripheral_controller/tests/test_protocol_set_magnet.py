@@ -1,12 +1,24 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 """Tests for the protocol-driven magnet engage/retract handler.
 
 The handler is symmetric to the existing UI handlers in shape but
 owns the engage/retract sequence atomically — protocol-side does
 one publish + one wait_for instead of two."""
 
+# Standard library imports.
 import json
 from unittest.mock import MagicMock, patch
 
+# Microdrop package imports.
 from peripheral_controller.consts import (
     MAGNET_APPLIED,
     MIN_ZSTAGE_HEIGHT_MM,

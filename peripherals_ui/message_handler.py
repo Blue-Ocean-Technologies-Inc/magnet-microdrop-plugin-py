@@ -1,3 +1,13 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 """Dramatiq message handler for the peripherals (Z-Stage) UI.
 
 Replaces the old DramatiqStatusController + DramatiqStatusViewModel pair with
@@ -6,10 +16,13 @@ and teardown() for runtime hot unload). Handlers write to PeripheralModel,
 whose ``status`` trait is the Z-Stage's connected flag.
 """
 
+# Standard library imports.
 import json
 
+# Enthought library imports.
 from traits.api import Instance
 
+# Microdrop package imports.
 from peripheral_controller.consts import (
     FIRMWARE_UPLOAD_FINISHED,
     FIRMWARE_UPLOAD_LOG,
@@ -17,11 +30,14 @@ from peripheral_controller.consts import (
 )
 from template_status_and_controls.base_message_handler import BaseMessageHandler
 
+# Microdrop utils imports.
 from microdrop_utils.decorators import timestamped_value
 
+# Local imports.
 from .live_state import peripheral_live_state
 from .model import PeripheralModel
 
+# Logger import.
 from logger.logger_service import get_logger
 
 logger = get_logger(__name__)

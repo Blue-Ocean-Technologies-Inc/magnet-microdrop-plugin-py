@@ -1,3 +1,13 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 """Conftest for peripheral_protocol_controls Redis-integration tests.
 
 The broker MUST be configured at module load time, before any test
@@ -17,10 +27,12 @@ Mirrors dropbot_protocol_controls/tests/tests_with_redis_server_need/conftest.py
 from PPT-4.
 """
 
+# Third-party imports.
 import dramatiq
 import pytest
 from dramatiq.brokers.redis import RedisBroker
 
+# Microdrop utils imports.
 from microdrop_utils.broker_server_helpers import (
     configure_dramatiq_broker,
     is_redis_running,

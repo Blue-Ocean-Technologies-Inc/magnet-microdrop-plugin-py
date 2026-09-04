@@ -1,18 +1,34 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 # enthought imports
+
+# Enthought library imports.
 from envisage.ids import PREFERENCES_CATEGORIES, PREFERENCES_PANES
 from pyface.action.schema.schema_addition import SchemaAddition
 from traits.api import List, observe
 
+# Microdrop package imports.
 from peripheral_controller.consts import MR_BOX_HWID, START_DEVICE_MONITORING
 from template_status_and_controls.base_plugin import BaseStatusPlugin
 
+# Microdrop utils imports.
 from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
 from microdrop_utils.hardware_device_monitoring_helpers import (
     check_connected_ports_hwid,
 )
 
+# Local imports.
 from .consts import ACTOR_TOPIC_DICT, PKG
 
+# Logger import.
 from logger.logger_service import get_logger
 
 logger = get_logger(__name__)

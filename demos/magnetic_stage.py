@@ -1,7 +1,20 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
+# Standard library imports.
 import time
 
+# Third-party imports.
 from mr_box_peripheral_board import SerialProxy
 
+# Microdrop utils imports.
 from microdrop_utils.hardware_device_monitoring_helpers import check_devices_available
 
 magnetic_state_hwids = ["VID:PID=0403:6015"]

@@ -1,3 +1,13 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 """Peripheral (Z-Stage) status dock pane, on the status-and-controls template.
 
 The pane contents stay a hand-built Qt view (ZStageView in a scroll area) —
@@ -7,29 +17,35 @@ per-instance model/message-handler assembly, the status-bar icon with theme-
 tracked tooltip, and destroy() teardown for runtime hot unload.
 """
 
+# Enthought library imports.
 from pyface.qt.QtGui import Qt
 from pyface.qt.QtWidgets import QApplication, QScrollArea, QVBoxLayout, QWidget
 from traits.api import observe
 
+# Microdrop package imports.
 from template_status_and_controls.base_dock_pane import (
     BaseStatusDockPane,
     build_status_icon_tooltip,
     status_bar_icon_font,
 )
 
+# Microdrop style imports.
 from microdrop_style.button_styles import get_tooltip_style
 from microdrop_style.general_style import get_general_style
 from microdrop_style.helpers import QT_THEME_NAMES, is_dark_mode
 from microdrop_style.icons.icons import ICON_STAIRS
 from microdrop_style.label_style import get_label_style
 
+# Microdrop utils imports.
 from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
 from microdrop_utils.pyside_helpers import ClickableLabel
 
+# Local imports.
 from .consts import DEVICE_NAME, PKG, START_DEVICE_MONITORING, PKG_name, listener_name
 from .message_handler import PeripheralMessageHandler
 from .model import PeripheralModel
 
+# Logger import.
 from logger.logger_service import get_logger
 
 logger = get_logger(__name__)

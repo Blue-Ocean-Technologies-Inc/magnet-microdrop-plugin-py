@@ -1,11 +1,24 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 """Tests for the magnet compound column — model, custom view, factory."""
 
+# Standard library imports.
 import json
 from unittest.mock import MagicMock, patch
 
+# Enthought library imports.
 from pyface.qt.QtCore import Qt
 from traits.api import Bool, Float, HasTraits
 
+# Microdrop package imports.
 from peripheral_controller.consts import (
     MAGNET_APPLIED,
     MAX_ZSTAGE_HEIGHT_MM,
