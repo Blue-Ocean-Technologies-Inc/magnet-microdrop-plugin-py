@@ -19,14 +19,17 @@ import json
 from pyface.qt.QtCore import Qt
 from traits.api import Bool, Float
 
-from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
 from peripheral_controller.consts import (
-    MAX_ZSTAGE_HEIGHT_MM, MIN_ZSTAGE_HEIGHT_MM,
-    PROTOCOL_SET_MAGNET, MAGNET_APPLIED,
+    MAGNET_APPLIED,
+    MAX_ZSTAGE_HEIGHT_MM,
+    MIN_ZSTAGE_HEIGHT_MM,
+    PROTOCOL_SET_MAGNET,
 )
 from pluggable_protocol_tree.interfaces.i_compound_column import FieldSpec
 from pluggable_protocol_tree.models.compound_column import (
-    BaseCompoundColumnHandler, BaseCompoundColumnModel, CompoundColumn,
+    BaseCompoundColumnHandler,
+    BaseCompoundColumnModel,
+    CompoundColumn,
     DictCompoundColumnView,
 )
 from pluggable_protocol_tree.views.columns.checkbox import CheckboxColumnView
@@ -34,8 +37,9 @@ from pluggable_protocol_tree.views.columns.spinbox import (
     DoubleSpinBoxColumnView,
 )
 
-from ..consts import SET_MAGNET_FIELD_ID
+from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
 
+from ..consts import SET_MAGNET_FIELD_ID
 
 # Sentinel value below the minimum hardware position; the spinbox
 # renders it as "Default" and the backend treats any value < MIN as
@@ -46,14 +50,14 @@ _DEFAULT_SENTINEL = float(MIN_ZSTAGE_HEIGHT_MM - 0.5)
 class MagnetCompoundModel(BaseCompoundColumnModel):
     """Three coupled fields. base_id 'magnet' appears as compound_id on
     each field's column entry in JSON (PPT-11 framework)."""
+
     base_id = "magnet"
 
     def field_specs(self):
         return [
             FieldSpec(SET_MAGNET_FIELD_ID, "Set Magnet", False),
             FieldSpec("magnet_on", "Magnet", False),
-            FieldSpec("magnet_height_mm", "Magnet Height (mm)",
-                      _DEFAULT_SENTINEL),
+            FieldSpec("magnet_height_mm", "Magnet Height (mm)", _DEFAULT_SENTINEL),
         ]
 
     def trait_for_field(self, field_id):
@@ -99,8 +103,10 @@ class MagnetHeightSpinBoxView(DoubleSpinBoxColumnView):
 
     def get_flags(self, row):
         flags = super().get_flags(row)
-        if not (getattr(row, SET_MAGNET_FIELD_ID, False)
-                and getattr(row, "magnet_on", False)):
+        if not (
+            getattr(row, SET_MAGNET_FIELD_ID, False)
+            and getattr(row, "magnet_on", False)
+        ):
             flags &= ~Qt.ItemIsEditable
         return flags
 
@@ -118,6 +124,7 @@ class MagnetHandler(BaseCompoundColumnHandler):
     cell-edits to PeripheralPreferences. The user changes up_height_mm
     via the peripherals_ui status panel, not via protocol cells.
     """
+
     priority = 20
     wait_for_topics = [MAGNET_APPLIED]
     # Provider default for the Protocol Settings ack-wait grid: 10s,
@@ -135,10 +142,12 @@ class MagnetHandler(BaseCompoundColumnHandler):
         # engage/retract publish, no applied-ack wait (issue #1).
         if not getattr(row, SET_MAGNET_FIELD_ID, False):
             return
-        payload = json.dumps({
-            "on": bool(row.magnet_on),
-            "height_mm": float(row.magnet_height_mm),
-        })
+        payload = json.dumps(
+            {
+                "on": bool(row.magnet_on),
+                "height_mm": float(row.magnet_height_mm),
+            }
+        )
         publish_message(topic=PROTOCOL_SET_MAGNET, message=payload)
 
         if self.ack_time_s > 0:
@@ -150,14 +159,17 @@ def make_magnet_column():
     publishing magnet state and waiting for acknowledgement."""
     return CompoundColumn(
         model=MagnetCompoundModel(),
-        view=DictCompoundColumnView(cell_views={
-            SET_MAGNET_FIELD_ID: CheckboxColumnView(),
-            "magnet_on": MagnetOnCheckboxView(),
-            "magnet_height_mm": MagnetHeightSpinBoxView(
-                low=_DEFAULT_SENTINEL,
-                high=float(MAX_ZSTAGE_HEIGHT_MM),
-                decimals=2, single_step=0.1,
-            ),
-        }),
+        view=DictCompoundColumnView(
+            cell_views={
+                SET_MAGNET_FIELD_ID: CheckboxColumnView(),
+                "magnet_on": MagnetOnCheckboxView(),
+                "magnet_height_mm": MagnetHeightSpinBoxView(
+                    low=_DEFAULT_SENTINEL,
+                    high=float(MAX_ZSTAGE_HEIGHT_MM),
+                    decimals=2,
+                    single_step=0.1,
+                ),
+            }
+        ),
         handler=MagnetHandler(),
     )

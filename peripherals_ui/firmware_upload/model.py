@@ -9,13 +9,13 @@ Pico-only payload fields are pinned to their defaults.
 
 import serial.tools.list_ports
 
-from microdrop_utils.firmware_upload_dialog.consts import PORT_ENTRY_SEPARATOR
-from microdrop_utils.firmware_upload_dialog.model import FirmwareUploadModel
-
 from peripheral_controller.consts import (
     BUNDLED_MR_BOX_FIRMWARE_DESCRIPTION,
     MR_BOX_HWID,
 )
+
+from microdrop_utils.firmware_upload_dialog.consts import PORT_ENTRY_SEPARATOR
+from microdrop_utils.firmware_upload_dialog.model import FirmwareUploadModel
 
 
 class ZStageFirmwareUploadModel(FirmwareUploadModel):

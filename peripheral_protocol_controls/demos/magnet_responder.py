@@ -12,11 +12,12 @@ import time
 
 import dramatiq
 
-from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
 from peripheral_controller.consts import (
-    PROTOCOL_SET_MAGNET, MAGNET_APPLIED,
+    MAGNET_APPLIED,
+    PROTOCOL_SET_MAGNET,
 )
 
+from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +27,7 @@ DEMO_APPLY_DELAY_S = 0.05  # simulates physical magnet movement
 
 
 @dramatiq.actor(actor_name=DEMO_MAGNET_RESPONDER_ACTOR_NAME, queue_name="default")
-def _demo_magnet_responder(message: str, topic: str,
-                            timestamp: float = None):
+def _demo_magnet_responder(message: str, topic: str, timestamp: float = None):
     """ZStage stand-in. Acks with '1' (engaged) or '0' (retracted)."""
     logger.info("[demo magnet responder] received %r on %s", message, topic)
     payload = json.loads(message)

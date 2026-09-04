@@ -19,11 +19,12 @@ import threading
 
 from traits.api import Instance, provides
 
-from microdrop_utils.dramatiq_peripheral_serial_proxy import (
-    DramatiqPeripheralSerialProxy,
-)
 from peripheral_device_controller_base.services.peripheral_firmware_upload_service import (
     PeripheralFirmwareUploadService,
+)
+
+from microdrop_utils.dramatiq_peripheral_serial_proxy import (
+    DramatiqPeripheralSerialProxy,
 )
 
 from ..interfaces.i_peripheral_control_mixin_service import (

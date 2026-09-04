@@ -6,11 +6,14 @@ from pyface.qt.QtCore import Qt
 from traits.api import Bool, Float, HasTraits
 
 from peripheral_controller.consts import (
-    MIN_ZSTAGE_HEIGHT_MM, MAX_ZSTAGE_HEIGHT_MM,
+    MAX_ZSTAGE_HEIGHT_MM,
+    MIN_ZSTAGE_HEIGHT_MM,
 )
 from peripheral_protocol_controls.consts import SET_MAGNET_FIELD_ID
 from peripheral_protocol_controls.protocol_columns.magnet_column import (
-    MagnetCompoundModel, MagnetHeightSpinBoxView, MagnetOnCheckboxView,
+    MagnetCompoundModel,
+    MagnetHeightSpinBoxView,
+    MagnetOnCheckboxView,
     make_magnet_column,
 )
 from pluggable_protocol_tree.models.compound_column import (
@@ -22,9 +25,11 @@ def test_magnet_compound_model_field_specs():
     m = MagnetCompoundModel()
     specs = m.field_specs()
     assert [s.field_id for s in specs] == [
-        SET_MAGNET_FIELD_ID, "magnet_on", "magnet_height_mm"]
-    assert [s.col_name for s in specs] == [
-        "Set Magnet", "Magnet", "Magnet Height (mm)"]
+        SET_MAGNET_FIELD_ID,
+        "magnet_on",
+        "magnet_height_mm",
+    ]
+    assert [s.col_name for s in specs] == ["Set Magnet", "Magnet", "Magnet Height (mm)"]
     assert specs[0].default_value is False
     assert specs[1].default_value is False
     # Sentinel = MIN - 0.5 (the "Default" mode)
@@ -35,9 +40,11 @@ def test_magnet_compound_model_traits_are_bool_and_float():
     m = MagnetCompoundModel()
     enabled_trait = m.trait_for_field("magnet_on")
     height_trait = m.trait_for_field("magnet_height_mm")
+
     class Row(HasTraits):
         magnet_on = enabled_trait
         magnet_height_mm = height_trait
+
     r = Row()
     assert r.magnet_on is False
     assert r.magnet_height_mm == float(MIN_ZSTAGE_HEIGHT_MM - 0.5)
@@ -52,10 +59,13 @@ def test_magnet_height_view_displays_default_at_sentinel():
     v = MagnetHeightSpinBoxView(
         low=float(MIN_ZSTAGE_HEIGHT_MM - 0.5),
         high=float(MAX_ZSTAGE_HEIGHT_MM),
-        decimals=2, single_step=0.1,
+        decimals=2,
+        single_step=0.1,
     )
+
     class Row(HasTraits):
         magnet_on = Bool(True)
+
     r = Row()
     assert v.format_display(0.0, r) == "Default"
     assert v.format_display(MIN_ZSTAGE_HEIGHT_MM - 0.1, r) == "Default"
@@ -71,10 +81,12 @@ def test_magnet_height_view_read_only_when_magnet_off():
         low=float(MIN_ZSTAGE_HEIGHT_MM - 0.5),
         high=float(MAX_ZSTAGE_HEIGHT_MM),
     )
+
     class Row(HasTraits):
         set_magnet = Bool(True)
         magnet_on = Bool(False)
         magnet_height_mm = Float(5.0)
+
     r = Row()
     flags = v.get_flags(r)
     assert not (flags & Qt.ItemIsEditable)
@@ -85,10 +97,12 @@ def test_magnet_height_view_editable_when_magnet_on():
         low=float(MIN_ZSTAGE_HEIGHT_MM - 0.5),
         high=float(MAX_ZSTAGE_HEIGHT_MM),
     )
+
     class Row(HasTraits):
         set_magnet = Bool(True)
         magnet_on = Bool(True)
         magnet_height_mm = Float(5.0)
+
     r = Row()
     flags = v.get_flags(r)
     assert flags & Qt.ItemIsEditable
@@ -107,6 +121,7 @@ def test_cells_locked_until_set_magnet_checked():
         set_magnet = Bool(False)
         magnet_on = Bool(True)
         magnet_height_mm = Float(5.0)
+
     r = Row()
     assert not (height_view.get_flags(r) & Qt.ItemIsEditable)
     assert not (on_view.get_flags(r) & Qt.ItemIsUserCheckable)
@@ -125,7 +140,8 @@ import json
 from unittest.mock import MagicMock
 
 from peripheral_controller.consts import (
-    PROTOCOL_SET_MAGNET, MAGNET_APPLIED,
+    MAGNET_APPLIED,
+    PROTOCOL_SET_MAGNET,
 )
 
 
@@ -133,6 +149,7 @@ def test_magnet_handler_priority_20():
     from peripheral_protocol_controls.protocol_columns.magnet_column import (
         MagnetHandler,
     )
+
     handler = MagnetHandler()
     assert handler.priority == 20
 
@@ -141,6 +158,7 @@ def test_magnet_handler_wait_for_topics_includes_magnet_applied():
     from peripheral_protocol_controls.protocol_columns.magnet_column import (
         MagnetHandler,
     )
+
     handler = MagnetHandler()
     assert MAGNET_APPLIED in handler.wait_for_topics
 
@@ -192,8 +210,8 @@ def test_magnet_handler_skips_ack_wait_when_ack_time_zero():
     ):
         handler.on_step(row, ctx)
 
-    assert len(published) == 1                 # still publishes the state
-    ctx.wait_for.assert_not_called()           # but does not block on ack
+    assert len(published) == 1  # still publishes the state
+    ctx.wait_for.assert_not_called()  # but does not block on ack
 
 
 def test_magnet_handler_on_step_publishes_retract_payload():
@@ -202,6 +220,7 @@ def test_magnet_handler_on_step_publishes_retract_payload():
     from peripheral_protocol_controls.protocol_columns.magnet_column import (
         MagnetHandler,
     )
+
     handler = MagnetHandler()
     row = MagicMock()
     row.set_magnet = True
@@ -228,6 +247,7 @@ def test_magnet_handler_on_step_publishes_default_sentinel_payload():
     from peripheral_protocol_controls.protocol_columns.magnet_column import (
         MagnetHandler,
     )
+
     handler = MagnetHandler()
     row = MagicMock()
     row.set_magnet = True

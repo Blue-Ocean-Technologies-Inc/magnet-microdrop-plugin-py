@@ -5,20 +5,30 @@ from PySide6.QtCore import QObject, Signal
 from traits.has_traits import HasTraits, observe
 from traits.trait_types import Instance
 
-from microdrop_utils.decorators import debounce
-from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
 from peripherals_ui.model import PeripheralModel
 
+from microdrop_utils.decorators import debounce
+from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
+
 from logger.logger_service import get_logger
+
 logger = get_logger(__name__)
 
-from peripheral_controller.consts import GO_HOME, MOVE_UP, MOVE_DOWN, SET_POSITION, START_DEVICE_MONITORING
+from peripheral_controller.consts import (
+    GO_HOME,
+    MOVE_DOWN,
+    MOVE_UP,
+    SET_POSITION,
+    START_DEVICE_MONITORING,
+)
+
 
 def log_function_call_and_exceptions(func):
     """
     A decorator that wraps the decorated function in a try-except block,
     logging the function's name and any exceptions that occur.
     """
+
     @functools.wraps(func)  # Preserves the original function's metadata
     def wrapper(*args, **kwargs):
         func_name = f"{func.__module__}.{func.__name__}"
@@ -32,13 +42,16 @@ def log_function_call_and_exceptions(func):
 
     return wrapper
 
+
 # ----------------------------------------------------------------------------
 # The ViewModel's Signal Bridge
 # A dedicated QObject to hold Qt signals for thread-safe communication.
 # ----------------------------------------------------------------------------
 
+
 class ZStageViewModelSignals(QObject):
     """Holds Qt signals for the ViewModel to communicate with the View."""
+
     status_text_changed = Signal(str)
     position_text_changed = Signal(str)
     position_value_changed = Signal(float)  # Signal for the raw float value
@@ -48,6 +61,7 @@ class ZStageViewModelSignals(QObject):
 
 class ZStageViewModel(HasTraits):
     """Manages the logic for the Positioner View."""
+
     model = Instance(PeripheralModel)
     view_signals = Instance(ZStageViewModelSignals, ())  # Auto-creates an instance
 
@@ -109,7 +123,6 @@ class ZStageViewModel(HasTraits):
 
         self.view_signals.controls_enabled_changed.emit(self.model.status)
 
-
     # --- Observers (React to Model changes) ---
 
     @observe("model:status")
@@ -136,7 +149,6 @@ class ZStageViewModel(HasTraits):
         """Disable the search button once a search has been requested (button or menu)."""
         self.view_signals.search_enabled_changed.emit(not event.new)
 
-
     # --- Initializer ---
     def force_initial_update(self):
         """Pushes the current model state to the view's signals."""
@@ -145,5 +157,3 @@ class ZStageViewModel(HasTraits):
         self.view_signals.position_value_changed.emit(self.model.position)
         self.view_signals.controls_enabled_changed.emit(self.model.status)
         self.view_signals.search_enabled_changed.emit(not self.model.search_requested)
-
-

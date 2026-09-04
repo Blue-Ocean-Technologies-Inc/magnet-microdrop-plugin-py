@@ -2,7 +2,7 @@ import time
 
 from microdrop_utils.hardware_device_monitoring_helpers import check_devices_available
 
-magnetic_state_hwids = ['VID:PID=0403:6015']
+magnetic_state_hwids = ["VID:PID=0403:6015"]
 port = check_devices_available(magnetic_state_hwids)
 
 print(port)

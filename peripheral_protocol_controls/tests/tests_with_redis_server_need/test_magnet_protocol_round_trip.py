@@ -4,6 +4,7 @@ strictly before any priority-30 electrode publish.
 
 Requires a running Redis server on localhost:6379.
 """
+
 import json
 import time
 from threading import Lock
@@ -15,13 +16,15 @@ import pytest
 from microdrop_utils.broker_server_helpers import (
     remove_middleware_from_dramatiq_broker,
 )
+
 remove_middleware_from_dramatiq_broker(
     middleware_name="dramatiq.middleware.prometheus",
     broker=dramatiq.get_broker(),
 )
 
 from peripheral_controller.consts import (
-    PROTOCOL_SET_MAGNET, MAGNET_APPLIED,
+    MAGNET_APPLIED,
+    PROTOCOL_SET_MAGNET,
 )
 from peripheral_protocol_controls.protocol_columns.magnet_column import (
     make_magnet_column,
@@ -37,12 +40,12 @@ from pluggable_protocol_tree.builtins.name_column import make_name_column
 from pluggable_protocol_tree.builtins.routes_column import make_routes_column
 from pluggable_protocol_tree.builtins.type_column import make_type_column
 from pluggable_protocol_tree.consts import (
-    ELECTRODES_STATE_APPLIED, ELECTRODES_STATE_CHANGE,
+    ELECTRODES_STATE_APPLIED,
+    ELECTRODES_STATE_CHANGE,
 )
 from pluggable_protocol_tree.execution.executor import ProtocolExecutor
 from pluggable_protocol_tree.models._compound_adapters import _expand_compound
 from pluggable_protocol_tree.models.row_manager import RowManager
-
 
 # Recording spy actor — captures every relevant topic with timestamps
 # so we can assert ordering.
@@ -67,12 +70,13 @@ def setup_responder_and_spy(router_actor):
 
     # Importing these modules registers their actors with the broker.
     from peripheral_protocol_controls.demos.magnet_responder import (
-        subscribe_demo_responder, DEMO_MAGNET_RESPONDER_ACTOR_NAME,
+        DEMO_MAGNET_RESPONDER_ACTOR_NAME,
+        subscribe_demo_responder,
     )
-    from pluggable_protocol_tree.execution import listener as _listener  # noqa: F401
     from pluggable_protocol_tree.demos.electrode_responder import (
         DEMO_RESPONDER_ACTOR_NAME,
     )
+    from pluggable_protocol_tree.execution import listener as _listener  # noqa: F401
 
     broker = dramatiq.get_broker()
     broker.flush_all()
@@ -95,7 +99,8 @@ def setup_responder_and_spy(router_actor):
     # Spy on the topics we want to assert on
     for topic in (PROTOCOL_SET_MAGNET, MAGNET_APPLIED, ELECTRODES_STATE_CHANGE):
         router.message_router_data.add_subscriber_to_topic(
-            topic=topic, subscribing_actor_name=SPY_ACTOR_NAME,
+            topic=topic,
+            subscribing_actor_name=SPY_ACTOR_NAME,
         )
 
     worker = Worker(broker, worker_timeout=100)
@@ -107,7 +112,8 @@ def setup_responder_and_spy(router_actor):
         # Clean up subscriptions so they don't bleed into the next test.
         for topic in (PROTOCOL_SET_MAGNET, MAGNET_APPLIED, ELECTRODES_STATE_CHANGE):
             router.message_router_data.remove_subscriber_from_topic(
-                topic=topic, subscribing_actor_name=SPY_ACTOR_NAME,
+                topic=topic,
+                subscribing_actor_name=SPY_ACTOR_NAME,
             )
         router.message_router_data.remove_subscriber_from_topic(
             topic=ELECTRODES_STATE_CHANGE,
@@ -118,8 +124,10 @@ def setup_responder_and_spy(router_actor):
             subscribing_actor_name="pluggable_protocol_tree_executor_listener",
         )
         from peripheral_protocol_controls.demos.magnet_responder import (
-            DEMO_MAGNET_RESPONDER_ACTOR_NAME, EXECUTOR_LISTENER_ACTOR_NAME,
+            DEMO_MAGNET_RESPONDER_ACTOR_NAME,
+            EXECUTOR_LISTENER_ACTOR_NAME,
         )
+
         router.message_router_data.remove_subscriber_from_topic(
             topic=PROTOCOL_SET_MAGNET,
             subscribing_actor_name=DEMO_MAGNET_RESPONDER_ACTOR_NAME,
@@ -132,9 +140,12 @@ def setup_responder_and_spy(router_actor):
 
 def _build_columns():
     return [
-        make_type_column(), make_id_column(), make_name_column(),
+        make_type_column(),
+        make_id_column(),
+        make_name_column(),
         make_duration_column(),
-        make_electrodes_column(), make_routes_column(),
+        make_electrodes_column(),
+        make_routes_column(),
         *_expand_compound(make_magnet_column()),
     ]
 
@@ -143,13 +154,16 @@ def test_magnet_responder_received_correct_setpoint(setup_responder_and_spy):
     """The protocol writes magnet=on/height=5.0; responder sees that JSON."""
     rm = RowManager(columns=_build_columns())
     rm.protocol_metadata["electrode_to_channel"] = {"e00": 0}
-    rm.add_step(values={
-        "name": "S1",
-        "duration_s": 0.05,
-        "electrodes": ["e00"],
-        "set_magnet": True, "magnet_on": True,
-        "magnet_height_mm": 5.0,
-    })
+    rm.add_step(
+        values={
+            "name": "S1",
+            "duration_s": 0.05,
+            "electrodes": ["e00"],
+            "set_magnet": True,
+            "magnet_on": True,
+            "magnet_height_mm": 5.0,
+        }
+    )
 
     executor = ProtocolExecutor(row_manager=rm)
     executor.start()
@@ -170,13 +184,16 @@ def test_magnet_ack_before_electrode_change(setup_responder_and_spy):
     publish — proves priority 20 < priority 30 in practice."""
     rm = RowManager(columns=_build_columns())
     rm.protocol_metadata["electrode_to_channel"] = {f"e{i:02d}": i for i in range(5)}
-    rm.add_step(values={
-        "name": "S1",
-        "duration_s": 0.05,
-        "electrodes": ["e00", "e01"],
-        "set_magnet": True, "magnet_on": True,
-        "magnet_height_mm": 5.0,
-    })
+    rm.add_step(
+        values={
+            "name": "S1",
+            "duration_s": 0.05,
+            "electrodes": ["e00", "e01"],
+            "set_magnet": True,
+            "magnet_on": True,
+            "magnet_height_mm": 5.0,
+        }
+    )
 
     executor = ProtocolExecutor(row_manager=rm)
     executor.start()

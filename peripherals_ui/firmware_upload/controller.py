@@ -7,10 +7,6 @@ panel (the mr-box firmware is bundled — nothing to configure beyond the
 port and timeout).
 """
 
-from microdrop_utils.firmware_upload_dialog.controller import (
-    FirmwareUploadDialogController,
-)
-
 from peripheral_controller.consts import (
     CANCEL_FIRMWARE_UPLOAD,
     FIRMWARE_UPLOAD_FINISHED,
@@ -18,6 +14,10 @@ from peripheral_controller.consts import (
     FIRMWARE_UPLOAD_STARTED,
 )
 from peripheral_controller.datamodels import upload_firmware_publisher
+
+from microdrop_utils.firmware_upload_dialog.controller import (
+    FirmwareUploadDialogController,
+)
 
 from ..live_state import peripheral_live_state
 from .model import ZStageFirmwareUploadModel

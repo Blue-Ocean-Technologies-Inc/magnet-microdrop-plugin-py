@@ -1,6 +1,6 @@
-from traits.api import HasTraits, Str, Bool, Float, observe
+from traits.api import Bool, Float, HasTraits, Str, observe
 
-from .consts import disconnected_color, connected_color
+from .consts import connected_color, disconnected_color
 
 
 class PeripheralModel(HasTraits):

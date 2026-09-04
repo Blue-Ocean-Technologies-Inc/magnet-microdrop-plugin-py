@@ -5,22 +5,24 @@ the shared BaseMessageHandler (reflection dispatch, timestamped dedup guards,
 and teardown() for runtime hot unload). Handlers write to PeripheralModel,
 whose ``status`` trait is the Z-Stage's connected flag.
 """
+
 import json
 
 from traits.api import Instance
-
-from template_status_and_controls.base_message_handler import BaseMessageHandler
-from microdrop_utils.decorators import timestamped_value
-from logger.logger_service import get_logger
 
 from peripheral_controller.consts import (
     FIRMWARE_UPLOAD_FINISHED,
     FIRMWARE_UPLOAD_LOG,
     FIRMWARE_UPLOAD_STARTED,
 )
+from template_status_and_controls.base_message_handler import BaseMessageHandler
+
+from microdrop_utils.decorators import timestamped_value
 
 from .live_state import peripheral_live_state
 from .model import PeripheralModel
+
+from logger.logger_service import get_logger
 
 logger = get_logger(__name__)
 

@@ -1,14 +1,17 @@
 # enthought imports
-from envisage.ids import PREFERENCES_PANES, PREFERENCES_CATEGORIES
+from envisage.ids import PREFERENCES_CATEGORIES, PREFERENCES_PANES
 from pyface.action.schema.schema_addition import SchemaAddition
 from traits.api import List, observe
 
+from peripheral_controller.consts import MR_BOX_HWID, START_DEVICE_MONITORING
 from template_status_and_controls.base_plugin import BaseStatusPlugin
 
 from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
-from microdrop_utils.hardware_device_monitoring_helpers import check_connected_ports_hwid
-from peripheral_controller.consts import MR_BOX_HWID, START_DEVICE_MONITORING
-from .consts import PKG, ACTOR_TOPIC_DICT
+from microdrop_utils.hardware_device_monitoring_helpers import (
+    check_connected_ports_hwid,
+)
+
+from .consts import ACTOR_TOPIC_DICT, PKG
 
 from logger.logger_service import get_logger
 
@@ -34,6 +37,7 @@ class PeripheralUiPlugin(BaseStatusPlugin):
     # ------------------------------------------------------------------ #
     def _get_dock_pane_class(self):
         from .dock_pane import PeripheralStatusDockPane
+
         return PeripheralStatusDockPane
 
     def _get_actor_topic_dict(self) -> dict:
@@ -41,6 +45,7 @@ class PeripheralUiPlugin(BaseStatusPlugin):
 
     def _get_menu_additions(self) -> list:
         from .menus import tools_menu_factory
+
         return [
             SchemaAddition(
                 factory=tools_menu_factory,
@@ -53,10 +58,12 @@ class PeripheralUiPlugin(BaseStatusPlugin):
     # ------------------------------------------------------------------ #
     def _preferences_panes_default(self):
         from .preferences import PeripheralPreferencesPane
+
         return [PeripheralPreferencesPane]
 
     def _preferences_categories_default(self):
         from .preferences import peripherals_tab
+
         return [peripherals_tab]
 
     # ------------------------------------------------------------------ #

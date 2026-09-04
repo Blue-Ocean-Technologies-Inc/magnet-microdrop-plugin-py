@@ -4,15 +4,20 @@ from peripheral_device_controller_base.consts import (
     DEFAULT_ALWAYS_ALLOWED_SUBTOPICS,
     FIRMWARE_UPLOAD_ALWAYS_ALLOWED_SUBTOPICS,
 )
-from peripheral_device_controller_base.peripheral_device_controller_base import PeripheralDeviceControllerBase
+from peripheral_device_controller_base.peripheral_device_controller_base import (
+    PeripheralDeviceControllerBase,
+)
 
-from .interfaces.i_peripheral_controller_base import IPeripheralControllerBase
-from microdrop_utils.dramatiq_peripheral_serial_proxy import DramatiqPeripheralSerialProxy
-from .preferences import PeripheralPreferences
+from microdrop_utils.dramatiq_peripheral_serial_proxy import (
+    DramatiqPeripheralSerialProxy,
+)
 
 from .consts import DEVICE_NAME, PKG
+from .interfaces.i_peripheral_controller_base import IPeripheralControllerBase
+from .preferences import PeripheralPreferences
 
 from logger.logger_service import get_logger
+
 logger = get_logger(__name__, level="INFO")
 
 
@@ -24,6 +29,7 @@ class PeripheralControllerBase(PeripheralDeviceControllerBase):
     ``PeripheralDeviceControllerBase``; this subclass only pins the device
     identity and narrows the proxy/preferences trait types.
     """
+
     _device_name = Str(DEVICE_NAME)
     listener_name = Str(f"{PKG}_listener")
     proxy = Instance(DramatiqPeripheralSerialProxy)

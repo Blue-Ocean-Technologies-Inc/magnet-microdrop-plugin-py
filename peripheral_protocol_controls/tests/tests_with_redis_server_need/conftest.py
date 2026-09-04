@@ -19,12 +19,12 @@ from PPT-4.
 
 import dramatiq
 import pytest
-
-from microdrop_utils.broker_server_helpers import (
-    configure_dramatiq_broker, is_redis_running,
-)
 from dramatiq.brokers.redis import RedisBroker
 
+from microdrop_utils.broker_server_helpers import (
+    configure_dramatiq_broker,
+    is_redis_running,
+)
 
 # Only configure if not already on a RedisBroker — the parent conftest.py
 # should have done it first, but guard here for correctness when this
@@ -52,4 +52,5 @@ def router_actor():
     once, reuse everywhere.
     """
     from microdrop_utils.dramatiq_pub_sub_helpers import MessageRouterActor
+
     return MessageRouterActor()

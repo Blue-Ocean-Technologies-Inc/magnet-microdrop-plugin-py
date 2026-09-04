@@ -20,6 +20,7 @@ from microdrop_style.icons.icons import (
     ICON_REFRESH,
     ICON_USB,
 )
+
 from microdrop_utils.firmware_upload_dialog.view import LogViewEditor
 from microdrop_utils.traitsui_qt_helpers import (
     HoverScrollEnumEditor,

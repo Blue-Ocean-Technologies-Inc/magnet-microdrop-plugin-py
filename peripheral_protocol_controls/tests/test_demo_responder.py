@@ -2,14 +2,17 @@
 
 Doesn't require Redis — exercises the actor function directly.
 """
+
 import json
 from unittest.mock import patch
 
 from peripheral_controller.consts import (
-    PROTOCOL_SET_MAGNET, MAGNET_APPLIED,
+    MAGNET_APPLIED,
+    PROTOCOL_SET_MAGNET,
 )
 from peripheral_protocol_controls.demos.magnet_responder import (
-    DEMO_MAGNET_RESPONDER_ACTOR_NAME, _demo_magnet_responder,
+    DEMO_MAGNET_RESPONDER_ACTOR_NAME,
+    _demo_magnet_responder,
 )
 
 

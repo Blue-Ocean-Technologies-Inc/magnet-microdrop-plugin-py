@@ -3,11 +3,13 @@
 The handler is symmetric to the existing UI handlers in shape but
 owns the engage/retract sequence atomically — protocol-side does
 one publish + one wait_for instead of two."""
+
 import json
 from unittest.mock import MagicMock, patch
 
 from peripheral_controller.consts import (
-    MAGNET_APPLIED, MIN_ZSTAGE_HEIGHT_MM,
+    MAGNET_APPLIED,
+    MIN_ZSTAGE_HEIGHT_MM,
 )
 from peripheral_controller.services.zstage_state_setter_service import (
     ZStageStatesSetterMixinService,
@@ -26,15 +28,23 @@ def test_protocol_set_magnet_off_runs_retract_sequence():
     proxy.zstage.home(). Verify exact call order."""
     svc = _make_service()
     published = []
-    with patch(
-        "peripheral_controller.services.zstage_state_setter_service.publish_message",
-        side_effect=lambda **kw: published.append(kw),
-    ), patch(
-        "peripheral_controller.services.zstage_state_setter_service.time.sleep",
-    ) as mock_sleep:
-        svc.on_protocol_set_magnet_request(json.dumps({
-            "on": False, "height_mm": 0.0,
-        }))
+    with (
+        patch(
+            "peripheral_controller.services.zstage_state_setter_service.publish_message",
+            side_effect=lambda **kw: published.append(kw),
+        ),
+        patch(
+            "peripheral_controller.services.zstage_state_setter_service.time.sleep",
+        ) as mock_sleep,
+    ):
+        svc.on_protocol_set_magnet_request(
+            json.dumps(
+                {
+                    "on": False,
+                    "height_mm": 0.0,
+                }
+            )
+        )
 
     # Order of calls on the proxy.zstage:
     method_names = [c[0] for c in svc.proxy.zstage.method_calls]
@@ -60,9 +70,14 @@ def test_protocol_set_magnet_on_with_specific_height():
         "peripheral_controller.services.zstage_state_setter_service.publish_message",
         side_effect=_capture_publish,
     ):
-        svc.on_protocol_set_magnet_request(json.dumps({
-            "on": True, "height_mm": 12.5,
-        }))
+        svc.on_protocol_set_magnet_request(
+            json.dumps(
+                {
+                    "on": True,
+                    "height_mm": 12.5,
+                }
+            )
+        )
 
     # proxy.zstage.position assigned to 12.5
     assert svc.proxy.zstage.position == 12.5
@@ -75,16 +90,24 @@ def test_protocol_set_magnet_on_with_sentinel_uses_live_pref():
     svc = _make_service()
     fake_prefs = MagicMock()
     fake_prefs.up_height_mm = 22.5
-    with patch(
-        "peripheral_controller.services.zstage_state_setter_service.publish_message",
-    ), patch(
-        "peripheral_controller.services.zstage_state_setter_service.PeripheralPreferences",
-        return_value=fake_prefs,
+    with (
+        patch(
+            "peripheral_controller.services.zstage_state_setter_service.publish_message",
+        ),
+        patch(
+            "peripheral_controller.services.zstage_state_setter_service.PeripheralPreferences",
+            return_value=fake_prefs,
+        ),
     ):
         # sentinel = anything < MIN_ZSTAGE_HEIGHT_MM
-        svc.on_protocol_set_magnet_request(json.dumps({
-            "on": True, "height_mm": MIN_ZSTAGE_HEIGHT_MM - 0.5,
-        }))
+        svc.on_protocol_set_magnet_request(
+            json.dumps(
+                {
+                    "on": True,
+                    "height_mm": MIN_ZSTAGE_HEIGHT_MM - 0.5,
+                }
+            )
+        )
 
     # Should have used the live pref value, NOT the sentinel
     assert svc.proxy.zstage.position == 22.5
@@ -97,15 +120,23 @@ def test_protocol_set_magnet_does_not_persist_to_prefs():
     svc = _make_service()
     fake_prefs = MagicMock()
     fake_prefs.up_height_mm = 999
-    with patch(
-        "peripheral_controller.services.zstage_state_setter_service.publish_message",
-    ), patch(
-        "peripheral_controller.services.zstage_state_setter_service.PeripheralPreferences",
-        return_value=fake_prefs,
+    with (
+        patch(
+            "peripheral_controller.services.zstage_state_setter_service.publish_message",
+        ),
+        patch(
+            "peripheral_controller.services.zstage_state_setter_service.PeripheralPreferences",
+            return_value=fake_prefs,
+        ),
     ):
-        svc.on_protocol_set_magnet_request(json.dumps({
-            "on": True, "height_mm": 5.0,
-        }))
+        svc.on_protocol_set_magnet_request(
+            json.dumps(
+                {
+                    "on": True,
+                    "height_mm": 5.0,
+                }
+            )
+        )
 
     # Pref should be untouched — sentinel not triggered, pref not read or written
     assert fake_prefs.up_height_mm == 999
