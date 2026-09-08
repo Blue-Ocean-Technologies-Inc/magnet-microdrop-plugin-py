@@ -1,15 +1,34 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 # enthought imports
-from envisage.ids import PREFERENCES_PANES, PREFERENCES_CATEGORIES
+
+# Enthought library imports.
+from envisage.ids import PREFERENCES_CATEGORIES, PREFERENCES_PANES
 from pyface.action.schema.schema_addition import SchemaAddition
 from traits.api import List, observe
 
+# Microdrop package imports.
+from peripheral_controller.consts import MR_BOX_HWID, START_DEVICE_MONITORING
 from template_status_and_controls.base_plugin import BaseStatusPlugin
 
+# Microdrop utils imports.
 from microdrop_utils.dramatiq_pub_sub_helpers import publish_message
-from microdrop_utils.hardware_device_monitoring_helpers import check_connected_ports_hwid
-from peripheral_controller.consts import MR_BOX_HWID, START_DEVICE_MONITORING
-from .consts import PKG, ACTOR_TOPIC_DICT
+from microdrop_utils.hardware_device_monitoring_helpers import (
+    check_connected_ports_hwid,
+)
 
+# Local imports.
+from .consts import ACTOR_TOPIC_DICT, PKG
+
+# Logger import.
 from logger.logger_service import get_logger
 
 logger = get_logger(__name__)
@@ -34,6 +53,7 @@ class PeripheralUiPlugin(BaseStatusPlugin):
     # ------------------------------------------------------------------ #
     def _get_dock_pane_class(self):
         from .dock_pane import PeripheralStatusDockPane
+
         return PeripheralStatusDockPane
 
     def _get_actor_topic_dict(self) -> dict:
@@ -41,6 +61,7 @@ class PeripheralUiPlugin(BaseStatusPlugin):
 
     def _get_menu_additions(self) -> list:
         from .menus import tools_menu_factory
+
         return [
             SchemaAddition(
                 factory=tools_menu_factory,
@@ -53,10 +74,12 @@ class PeripheralUiPlugin(BaseStatusPlugin):
     # ------------------------------------------------------------------ #
     def _preferences_panes_default(self):
         from .preferences import PeripheralPreferencesPane
+
         return [PeripheralPreferencesPane]
 
     def _preferences_categories_default(self):
         from .preferences import peripherals_tab
+
         return [peripherals_tab]
 
     # ------------------------------------------------------------------ #
@@ -73,5 +96,6 @@ class PeripheralUiPlugin(BaseStatusPlugin):
         else:
             logger.info(
                 "Peripheral Board not connected. To start search, goto tools menu:"
-                "Tools -> Peripherals -> Z-Stage -> Search Connection or use the peripheral UI Dock Pane button."
+                "Tools -> Peripherals -> Z-Stage -> Search Connection or use "
+                "the peripheral UI Dock Pane button."
             )

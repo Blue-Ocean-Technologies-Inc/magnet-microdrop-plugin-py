@@ -1,3 +1,13 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 """Z-Stage wiring for the shared firmware-upload dialog.
 
 The dialog itself (model / view / controller) is device-agnostic and lives in
@@ -7,10 +17,7 @@ panel (the mr-box firmware is bundled — nothing to configure beyond the
 port and timeout).
 """
 
-from microdrop_utils.firmware_upload_dialog.controller import (
-    FirmwareUploadDialogController,
-)
-
+# Microdrop package imports.
 from peripheral_controller.consts import (
     CANCEL_FIRMWARE_UPLOAD,
     FIRMWARE_UPLOAD_FINISHED,
@@ -19,6 +26,12 @@ from peripheral_controller.consts import (
 )
 from peripheral_controller.datamodels import upload_firmware_publisher
 
+# Microdrop utils imports.
+from microdrop_utils.firmware_upload_dialog.controller import (
+    FirmwareUploadDialogController,
+)
+
+# Local imports.
 from ..live_state import peripheral_live_state
 from .model import ZStageFirmwareUploadModel
 from .view import zstage_firmware_upload_view

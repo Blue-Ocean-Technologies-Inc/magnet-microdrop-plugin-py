@@ -1,24 +1,42 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
+# Enthought library imports.
 from apptools.preferences.api import PreferencesHelper
 from traits.api import Dict, Property
-from pyface.api import warning
 
-from logger.logger_service import get_logger
-logger = get_logger(__name__)
-
+# Microdrop package imports.
 from microdrop_application.helpers import get_microdrop_redis_globals_manager
-app_globals = get_microdrop_redis_globals_manager()
 
+# Microdrop utils imports.
 from microdrop_utils.traitsui_qt_helpers import RangeWithViewHints
 
-from .consts import DEFAULT_UP_HEIGHT_MM, DEFAULT_DOWN_HEIGHT_MM, MAX_ZSTAGE_HEIGHT_MM, MIN_ZSTAGE_HEIGHT_MM
+# Local imports.
+from .consts import (
+    DEFAULT_DOWN_HEIGHT_MM,
+    DEFAULT_UP_HEIGHT_MM,
+    MAX_ZSTAGE_HEIGHT_MM,
+    MIN_ZSTAGE_HEIGHT_MM,
+)
 
-z_stage_preferences_names = [
-            'down_height_mm', 'up_height_mm'
-        ]
+# Logger import.
+from logger.logger_service import get_logger
+
+logger = get_logger(__name__)
+app_globals = get_microdrop_redis_globals_manager()
+
+z_stage_preferences_names = ["down_height_mm", "up_height_mm"]
 
 z_stage_trait_name_mapping = {
-    'down_height_mm': 'zstage_down_position',
-    'up_height_mm': 'zstage_up_position',
+    "down_height_mm": "zstage_down_position",
+    "up_height_mm": "zstage_up_position",
 }
 
 
@@ -32,12 +50,11 @@ class PeripheralPreferences(PreferencesHelper):
     # The path to the preference node that contains the preferences.
     preferences_path = "microdrop.peripheral_settings"
 
-
     up_height_mm = RangeWithViewHints(
         value=DEFAULT_UP_HEIGHT_MM,
         low=MIN_ZSTAGE_HEIGHT_MM + 0.1,
         high=MAX_ZSTAGE_HEIGHT_MM,
-        desc="Height of stage when up command sent"
+        desc="Height of stage when up command sent",
     )
 
     _max_down_height = Property(observe="up_height_mm")
@@ -46,7 +63,7 @@ class PeripheralPreferences(PreferencesHelper):
         value=DEFAULT_DOWN_HEIGHT_MM,
         low=MIN_ZSTAGE_HEIGHT_MM,
         high="_max_down_height",
-        desc="Height of stage when down command sent"
+        desc="Height of stage when down command sent",
     )
 
     #### Preferences ##########################################################

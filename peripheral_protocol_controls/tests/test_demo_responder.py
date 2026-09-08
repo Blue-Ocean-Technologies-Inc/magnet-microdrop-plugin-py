@@ -1,15 +1,30 @@
+# (C) Copyright 2024-2026 Blue Ocean Technologies, Inc., Toronto, ON
+# All rights reserved.
+#
+# This software is provided without warranty under the terms of the AGPL-3.0
+# license included in LICENSE and may be redistributed only under the
+# conditions described in the aforementioned license. The license is also
+# available online at https://www.gnu.org/licenses/agpl-3.0.txt
+#
+# Thanks for using Microdrop open source!
+
 """Tests for the in-process magnet demo responder.
 
 Doesn't require Redis — exercises the actor function directly.
 """
+
+# Standard library imports.
 import json
 from unittest.mock import patch
 
+# Microdrop package imports.
 from peripheral_controller.consts import (
-    PROTOCOL_SET_MAGNET, MAGNET_APPLIED,
+    MAGNET_APPLIED,
+    PROTOCOL_SET_MAGNET,
 )
 from peripheral_protocol_controls.demos.magnet_responder import (
-    DEMO_MAGNET_RESPONDER_ACTOR_NAME, _demo_magnet_responder,
+    DEMO_MAGNET_RESPONDER_ACTOR_NAME,
+    _demo_magnet_responder,
 )
 
 
